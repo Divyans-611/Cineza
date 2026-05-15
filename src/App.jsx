@@ -1,9 +1,5 @@
-import HomePage from './pages/HomePage'
+import Home from './pages/Home'
 
 export default function App() {
-  return (
-    <div className="app">
-      <HomePage />
-    </div>
-  )
+  return <Home />
 }
