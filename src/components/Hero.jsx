@@ -1,15 +1,13 @@
 export default function Hero() {
-  const stats = [
-    { label: '10K+ Movies', value: 'Explore' },
-    { label: 'AI Picks', value: 'Smart' },
-    { label: 'Gamified Reviews', value: 'Earn XP' },
-  ]
+  const stats = ['10K+ Movies', 'AI Picks', 'Gamified Reviews']
 
   return (
     <section className="hero" id="home">
+      <div className="hero__glow" aria-hidden="true" />
       <div className="hero__content">
+        <p className="hero__eyebrow">AI-powered movie discovery</p>
         <h1 className="hero__title">
-          Discover Movies That Match Your Mood
+          &ldquo;Cinema is how we dream with our eyes open&rdquo;
         </h1>
         <p className="hero__subtitle">
           Explore films, build your watchlist, write reviews, earn badges, and
@@ -26,10 +24,9 @@ export default function Hero() {
         </div>
 
         <div className="hero__stats">
-          {stats.map((stat) => (
-            <article key={stat.label} className="hero__stat-card">
-              <span className="hero__stat-value">{stat.value}</span>
-              <span className="hero__stat-label">{stat.label}</span>
+          {stats.map((label) => (
+            <article key={label} className="hero__stat-card">
+              <span className="hero__stat-label">{label}</span>
             </article>
           ))}
         </div>

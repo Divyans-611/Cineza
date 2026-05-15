@@ -22,6 +22,16 @@ export default function Navbar() {
           Login
         </button>
       </nav>
+
+      <ul className="navbar__links navbar__links--mobile" aria-label="Mobile navigation">
+        {links.map((link) => (
+          <li key={`mobile-${link}`}>
+            <a href={`#${link.toLowerCase().replace(/\s+/g, '-')}`}>
+              {link}
+            </a>
+          </li>
+        ))}
+      </ul>
     </header>
   )
 }
