@@ -23,6 +23,18 @@
 - Created placeholder pages in `src/pages/` with dark themed card layout.
 - Updated **Navbar** (`Link` / `NavLink` + active styling) and **CinezaDock** (clickable dock links).
 - Reusable `PlaceholderPage` component for shared page layout.
+- **Git:** `Phase 2.1 Initialised`
+
+### Movies discovery — Phase 2.2 · 10:08 AM
+- Expanded `src/data/movies.js` to 12 movies (overview, runtime, director, cast, language).
+- Built `/movies` page: live search (title, genre, director, cast), genre filter chips, movie grid, empty state.
+- Updated **MovieCard** — clickable cards linking to `/movies/:id`, hover “View Details” overlay.
+- Home featured section still shows 6 movies only.
+
+### Movies polish — Phase 2.2.1 · 10:40 AM
+- Fixed broken posters: reliable Wikimedia URLs + fallback UI on image error (🎬, title, “Poster unavailable”).
+- Premium **MovieCard**: fixed poster height, gradient overlay, hover lift/glow/zoom, rating in body.
+- Polished `/movies` toolbar, filter chips, grid spacing, and empty state (“Reset Filters”).
 
 ### Not started yet
 - Backend (Node / Express / MongoDB)

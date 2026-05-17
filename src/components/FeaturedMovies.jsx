@@ -11,7 +11,7 @@ export default function FeaturedMovies() {
         </p>
 
         <div className="featured__grid">
-          {movies.map((movie) => (
+          {movies.slice(0, 6).map((movie) => (
             <MovieCard key={movie.id} movie={movie} />
           ))}
         </div>
