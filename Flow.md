@@ -35,6 +35,12 @@
 - Fixed broken posters: reliable Wikimedia URLs + fallback UI on image error (🎬, title, “Poster unavailable”).
 - Premium **MovieCard**: fixed poster height, gradient overlay, hover lift/glow/zoom, rating in body.
 - Polished `/movies` toolbar, filter chips, grid spacing, and empty state (“Reset Filters”).
+- **Git:** `Phase 2.2.1 done`
+
+### Movie details — Phase 2.3 · 11:33 AM
+- Built full `/movies/:id` page: poster + info layout, director, cast, overview, action buttons (placeholder alerts).
+- Trailer Preview placeholder, 3 static Community Reviews cards, Similar Movies grid (4 cards).
+- `getMovieById()` & `getSimilarMovies()` helpers; “Movie Not Found” state with Back to Movies.
 
 ### Not started yet
 - Backend (Node / Express / MongoDB)

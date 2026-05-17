@@ -180,3 +180,21 @@ export const movies = [
     language: 'English',
   },
 ]
+
+export function getMovieById(id) {
+  return movies.find((movie) => movie.id === Number(id))
+}
+
+export function getSimilarMovies(movieId, limit = 4) {
+  const current = getMovieById(movieId)
+  if (!current) return []
+
+  const sameGenre = movies.filter(
+    (movie) => movie.id !== current.id && movie.genre === current.genre,
+  )
+  const others = movies.filter(
+    (movie) => movie.id !== current.id && movie.genre !== current.genre,
+  )
+
+  return [...sameGenre, ...others].slice(0, limit)
+}
