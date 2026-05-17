@@ -1,34 +1,50 @@
-export default function Navbar() {
-  const links = ['Home', 'Movies', 'AI Picks', 'Watchlist', 'Reviews']
+import { Link, NavLink } from 'react-router-dom'
 
+const navLinks = [
+  { label: 'Home', to: '/' },
+  { label: 'Movies', to: '/movies' },
+  { label: 'AI Picks', to: '/ai-picks' },
+  { label: 'Watchlist', to: '/watchlist' },
+  { label: 'Reviews', to: '/reviews' },
+]
+
+function navLinkClass({ isActive }) {
+  return isActive ? 'is-active' : undefined
+}
+
+export default function Navbar() {
   return (
     <header className="navbar">
       <nav className="navbar__inner">
-        <a href="#home" className="navbar__logo">
+        <Link to="/" className="navbar__logo">
           Cineza
-        </a>
+        </Link>
 
         <ul className="navbar__links">
-          {links.map((link) => (
-            <li key={link}>
-              <a href={`#${link.toLowerCase().replace(/\s+/g, '-')}`}>
-                {link}
-              </a>
+          {navLinks.map((link) => (
+            <li key={link.label}>
+              <NavLink to={link.to} end={link.to === '/'} className={navLinkClass}>
+                {link.label}
+              </NavLink>
             </li>
           ))}
         </ul>
 
-        <button type="button" className="btn btn--outline navbar__login">
+        <Link to="/login" className="btn btn--outline navbar__login">
           Login
-        </button>
+        </Link>
       </nav>
 
       <ul className="navbar__links navbar__links--mobile" aria-label="Mobile navigation">
-        {links.map((link) => (
-          <li key={`mobile-${link}`}>
-            <a href={`#${link.toLowerCase().replace(/\s+/g, '-')}`}>
-              {link}
-            </a>
+        {navLinks.map((link) => (
+          <li key={`mobile-${link.label}`}>
+            <NavLink
+              to={link.to}
+              end={link.to === '/'}
+              className={navLinkClass}
+            >
+              {link.label}
+            </NavLink>
           </li>
         ))}
       </ul>

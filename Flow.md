@@ -16,6 +16,14 @@
 - Updated hero headline to: *"Cinema is how we dream with our eyes open"*
 - **Git:** `Cineza Landing page V1.01`
 
+## May 17, 2026
+
+### Routing — Phase 2.1
+- Added `react-router-dom` and set up routes in `App.jsx` (Home, Movies, MovieDetails, AI Picks, Watchlist, Reviews, Profile, Login, 404).
+- Created placeholder pages in `src/pages/` with dark themed card layout.
+- Updated **Navbar** (`Link` / `NavLink` + active styling) and **CinezaDock** (clickable dock links).
+- Reusable `PlaceholderPage` component for shared page layout.
+
 ### Not started yet
 - Backend (Node / Express / MongoDB)
 - TMDB & Gemini API integration

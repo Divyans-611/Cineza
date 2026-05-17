@@ -1,11 +1,13 @@
+import { Link } from 'react-router-dom'
+
 export default function CinezaDock() {
   const dockItems = [
-    { icon: '🎬', label: 'Movies' },
-    { icon: '⭐', label: 'Reviews' },
-    { icon: '🤖', label: 'AI Picks' },
-    { icon: '🏆', label: 'Badges' },
-    { icon: '🍿', label: 'Watchlist' },
-    { icon: '👤', label: 'Profile' },
+    { icon: '🎬', label: 'Movies', to: '/movies' },
+    { icon: '⭐', label: 'Reviews', to: '/reviews' },
+    { icon: '🤖', label: 'AI Picks', to: '/ai-picks' },
+    { icon: '🏆', label: 'Badges', to: '/profile' },
+    { icon: '🍿', label: 'Watchlist', to: '/watchlist' },
+    { icon: '👤', label: 'Profile', to: '/profile' },
   ]
 
   return (
@@ -25,9 +27,9 @@ export default function CinezaDock() {
           aria-label="Cineza quick navigation"
         >
           {dockItems.map((item) => (
-            <button
+            <Link
               key={item.label}
-              type="button"
+              to={item.to}
               className="dock-item"
               aria-label={item.label}
             >
@@ -35,7 +37,7 @@ export default function CinezaDock() {
                 {item.icon}
               </span>
               <span className="dock-item__label">{item.label}</span>
-            </button>
+            </Link>
           ))}
         </div>
       </div>
