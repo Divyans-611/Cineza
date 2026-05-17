@@ -30,7 +30,7 @@ export default function Navbar() {
           ))}
         </ul>
 
-        <Link to="/login" className="btn btn--outline navbar__login">
+        <Link to="/login" className="btn btn--primary navbar__login primary-btn">
           Login
         </Link>
       </nav>

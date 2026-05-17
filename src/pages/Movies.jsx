@@ -28,6 +28,11 @@ function matchesSearch(movie, query) {
   return false
 }
 
+function resetFilters(setSearch, setActiveGenre) {
+  setSearch('')
+  setActiveGenre('All')
+}
+
 export default function Movies() {
   const [search, setSearch] = useState('')
   const [activeGenre, setActiveGenre] = useState('All')
@@ -40,20 +45,27 @@ export default function Movies() {
     })
   }, [search, activeGenre])
 
+  const hasActiveFilters = search.trim() !== '' || activeGenre !== 'All'
+  const countLabel =
+    filteredMovies.length === 1 ? 'movie' : 'movies'
+  const countText = hasActiveFilters
+    ? `Showing ${filteredMovies.length} of ${movies.length} ${countLabel}`
+    : `Showing ${filteredMovies.length} ${countLabel}`
+
   return (
     <>
       <Navbar />
-      <main className="movies-page">
-        <div className="movies-page__inner">
-          <header className="movies-page__header">
-            <h1 className="movies-page__title">Explore Movies</h1>
-            <p className="movies-page__subtitle">
+      <main className="page-shell movies-page">
+        <div className="page-shell__inner">
+          <header className="section-header section-header--left">
+            <h1 className="section-header__title">Explore Movies</h1>
+            <p className="section-header__subtitle">
               Search, filter, and discover films across genres, moods, and
               ratings.
             </p>
           </header>
 
-          <div className="movies-toolbar">
+          <div className="movies-toolbar glass-card">
             <label className="movies-search" htmlFor="movie-search">
               <span className="movies-search__icon" aria-hidden="true">
                 🔍
@@ -85,10 +97,20 @@ export default function Movies() {
             </div>
           </div>
 
-          <p className="movies-page__count" aria-live="polite">
-            {filteredMovies.length}{' '}
-            {filteredMovies.length === 1 ? 'movie' : 'movies'} found
-          </p>
+          <div className="movies-results-bar">
+            <p className="movies-page__count" aria-live="polite">
+              {countText}
+            </p>
+            {hasActiveFilters && (
+              <button
+                type="button"
+                className="btn btn--secondary movies-reset-btn"
+                onClick={() => resetFilters(setSearch, setActiveGenre)}
+              >
+                Reset Filters
+              </button>
+            )}
+          </div>
 
           {filteredMovies.length > 0 ? (
             <div className="movies-grid">
@@ -97,21 +119,18 @@ export default function Movies() {
               ))}
             </div>
           ) : (
-            <div className="movies-empty">
-              <span className="movies-empty__icon" aria-hidden="true">
+            <div className="empty-state glass-card movies-empty">
+              <span className="empty-state__icon" aria-hidden="true">
                 🎬
               </span>
-              <p className="movies-empty__title">No movies found</p>
-              <p className="movies-empty__text">
+              <p className="empty-state__title">No movies found</p>
+              <p className="empty-state__text">
                 Try another title, genre, director, or cast.
               </p>
               <button
                 type="button"
-                className="btn btn--secondary"
-                onClick={() => {
-                  setSearch('')
-                  setActiveGenre('All')
-                }}
+                className="btn btn--primary primary-btn"
+                onClick={() => resetFilters(setSearch, setActiveGenre)}
               >
                 Reset Filters
               </button>

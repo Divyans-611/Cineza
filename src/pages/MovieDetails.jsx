@@ -31,17 +31,17 @@ function getPlaceholderReviews(movie) {
   ]
 }
 
-function handleAction(action, movieTitle) {
-  alert(`${action} for "${movieTitle}" — coming in a later phase.`)
+function handleAction() {
+  alert('This feature will be available in the next phase.')
 }
 
 function MovieNotFound() {
   return (
     <>
       <Navbar />
-      <main className="movie-details movie-details--not-found">
-        <div className="movie-details__inner">
-          <article className="movie-details__empty">
+      <main className="page-shell movie-details movie-details--not-found">
+        <div className="page-shell__inner movie-details__inner">
+          <article className="movie-details__empty empty-state glass-card">
             <span className="movie-details__empty-icon" aria-hidden="true">
               🎬
             </span>
@@ -75,13 +75,13 @@ export default function MovieDetails() {
   return (
     <>
       <Navbar />
-      <main className="movie-details">
-        <div className="movie-details__inner">
+      <main className="page-shell movie-details">
+        <div className="page-shell__inner movie-details__inner">
           <Link to="/movies" className="movie-details__back">
             ← Back to Movies
           </Link>
 
-          <section className="movie-details__hero">
+          <section className="movie-details__hero glass-card">
             <div className="movie-details__poster-wrap">
               {!posterFailed ? (
                 <img
@@ -107,7 +107,9 @@ export default function MovieDetails() {
                   ★ {movie.rating}
                 </span>
                 <span className="movie-details__badge">{movie.year}</span>
-                <span className="movie-details__badge">{movie.genre}</span>
+                <span className="movie-details__badge movie-details__badge--genre">
+                  {movie.genre}
+                </span>
                 <span className="movie-details__badge">{movie.runtime} min</span>
                 <span className="movie-details__badge">{movie.language}</span>
               </div>
@@ -129,21 +131,21 @@ export default function MovieDetails() {
                 <button
                   type="button"
                   className="btn btn--primary"
-                  onClick={() => handleAction('Add to Watchlist', movie.title)}
+                  onClick={handleAction}
                 >
                   Add to Watchlist
                 </button>
                 <button
                   type="button"
                   className="btn btn--secondary"
-                  onClick={() => handleAction('Write Review', movie.title)}
+                  onClick={handleAction}
                 >
                   Write Review
                 </button>
                 <button
                   type="button"
                   className="btn btn--secondary"
-                  onClick={() => handleAction('Get AI Pick', movie.title)}
+                  onClick={handleAction}
                 >
                   Get AI Pick
                 </button>
@@ -153,7 +155,7 @@ export default function MovieDetails() {
 
           <section className="movie-details__section">
             <h2 className="movie-details__section-title">Trailer Preview</h2>
-            <div className="movie-details__trailer">
+            <div className="movie-details__trailer glass-card">
               <span className="movie-details__trailer-play" aria-hidden="true">
                 ▶
               </span>

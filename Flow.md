@@ -41,6 +41,15 @@
 - Built full `/movies/:id` page: poster + info layout, director, cast, overview, action buttons (placeholder alerts).
 - Trailer Preview placeholder, 3 static Community Reviews cards, Similar Movies grid (4 cards).
 - `getMovieById()` & `getSimilarMovies()` helpers; “Movie Not Found” state with Back to Movies.
+- **Git:** `Phase 2.3 done`
+
+### Frontend UX polish — Phase 2.4 · 11:42 AM
+- Global utilities: `.page-shell`, `.glass-card`, `.section-header`, `.empty-state`, coming-soon layouts.
+- Polished Navbar, Movies page (count + Reset Filters), Movie Details, Cineza Dock, Footer.
+- Coming-soon pages for AI Picks, Watchlist, Reviews, Profile, Login + improved 404.
+- **Git:** `Phase 2 completed ig`
+
+**Phase 2 complete** — routing, movies browse, movie details, and frontend polish (dummy data only).
 
 ### Not started yet
 - Backend (Node / Express / MongoDB)

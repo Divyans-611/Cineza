@@ -1,20 +1,27 @@
-export default function Footer() {
-  const links = ['About', 'Movies', 'Reviews', 'Watchlist']
+import { Link } from 'react-router-dom'
 
+const footerLinks = [
+  { label: 'Home', to: '/' },
+  { label: 'Movies', to: '/movies' },
+  { label: 'Reviews', to: '/reviews' },
+  { label: 'Watchlist', to: '/watchlist' },
+]
+
+export default function Footer() {
   return (
     <footer className="footer">
       <div className="footer__inner">
         <div className="footer__brand">
           <p className="footer__name">Cineza</p>
           <p className="footer__tagline">
-            Discover movies that match your mood.
+            &ldquo;Cinema is how we dream with our eyes open&rdquo;
           </p>
         </div>
 
         <ul className="footer__links">
-          {links.map((link) => (
-            <li key={link}>
-              <a href={`#${link.toLowerCase()}`}>{link}</a>
+          {footerLinks.map((link) => (
+            <li key={link.label}>
+              <Link to={link.to}>{link.label}</Link>
             </li>
           ))}
         </ul>
