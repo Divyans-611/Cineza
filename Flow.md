@@ -51,6 +51,22 @@
 
 **Phase 2 complete** — routing, movies browse, movie details, and frontend polish (dummy data only).
 
+## Phase 3 — Backend Foundation Started -> 19-05-2026 -> 02:16 AM
+
+In this phase, we started moving Cineza from a static frontend prototype toward a full-stack application.
+
+### Completed in Phase 3.1
+- Created a separate `backend/` folder inside the existing Cineza project.
+- Set up a basic Node.js + Express backend.
+- Added CORS, dotenv, JSON body parsing, and basic error handling.
+- Created a health check route at `/api/health`.
+- Verified that the backend runs successfully on port `5000`.
+- Confirmed that the frontend and backend can now run separately during development.
+
+### Current Backend Test Route
+```txt
+GET http://localhost:5000/api/health
+
 ### Not started yet
 - Backend (Node / Express / MongoDB)
 - TMDB & Gemini API integration
