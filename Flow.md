@@ -66,6 +66,12 @@ In this phase, we started moving Cineza from a static frontend prototype toward 
 ### Current Backend Test Route
 ```txt
 GET http://localhost:5000/api/health
+```
+
+### Transition to Antigravity
+- Project development transferred from Cursor to Antigravity due to AI limit exhaustion.
+- Analyzed existing Phase 1 to Phase 3.1 structure and generated project understanding report.
+- Prepared workspace for Phase 3.2.
 
 ### Not started yet
 - Backend (Node / Express / MongoDB)
