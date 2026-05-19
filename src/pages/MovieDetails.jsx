@@ -5,27 +5,28 @@ import Footer from '../components/Footer'
 import MovieCard from '../components/MovieCard'
 import { getMovieById as getDummyMovieById, getSimilarMovies } from '../data/movies'
 import { getMovieDetails, getMovieCredits, getMovieVideos } from '../services/movieService'
+import { normalizeTMDBDetails } from '../utils/movieUtils'
 
 function getPlaceholderReviews(movie) {
   return [
     {
       id: 1,
       username: 'cinema_scout',
-      rating: Math.min(10, movie.rating ? parseFloat(movie.rating) + 0.2 : 9).toFixed(1),
+      rating: Math.min(10, movie.rating && movie.rating !== 'N/A' ? parseFloat(movie.rating) + 0.2 : 9).toFixed(1),
       text: `${movie.title} is visually stunning and stays with you long after the credits. A must-watch for ${movie.genre ? movie.genre.toLowerCase() : 'movie'} fans.`,
       date: 'Mar 8, 2024',
     },
     {
       id: 2,
       username: 'reel_reviewer',
-      rating: movie.rating,
+      rating: movie.rating && movie.rating !== 'N/A' ? movie.rating : '8.5',
       text: `Loved the direction by ${movie.director}. The cast delivers strong performances throughout.`,
       date: 'Feb 19, 2024',
     },
     {
       id: 3,
       username: 'framebyframe',
-      rating: Math.max(6, movie.rating ? parseFloat(movie.rating) - 0.5 : 7).toFixed(1),
+      rating: Math.max(6, movie.rating && movie.rating !== 'N/A' ? parseFloat(movie.rating) - 0.5 : 7).toFixed(1),
       text: `A solid ${movie.genre} pick. Great pacing and an overview that truly pulls you into the story.`,
       date: 'Jan 30, 2024',
     },
@@ -64,7 +65,6 @@ function MovieNotFound() {
 export default function MovieDetails() {
   const { id } = useParams()
   const [movie, setMovie] = useState(null)
-  const [trailerKey, setTrailerKey] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
   const [posterFailed, setPosterFailed] = useState(false)
@@ -81,35 +81,9 @@ export default function MovieDetails() {
           getMovieVideos(id)
         ])
         
-        // Normalize TMDB data
-        const year = details.release_date ? details.release_date.substring(0, 4) : 'N/A'
-        const rating = details.vote_average ? details.vote_average.toFixed(1) : 'N/A'
-        const poster = details.poster_path ? `https://image.tmdb.org/t/p/w500${details.poster_path}` : null
-        const backdrop = details.backdrop_path ? `https://image.tmdb.org/t/p/original${details.backdrop_path}` : null
-        const genre = details.genres && details.genres.length > 0 ? details.genres[0].name : 'Movie'
+        const normalized = normalizeTMDBDetails(details, credits, videos)
+        setMovie(normalized)
         
-        const cast = credits.cast ? credits.cast.slice(0, 5).map(c => c.name) : []
-        const directorObj = credits.crew ? credits.crew.find(c => c.job === 'Director') : null
-        const director = directorObj ? directorObj.name : 'Unknown'
-        
-        const trailerObj = videos.results ? videos.results.find(v => v.type === 'Trailer' && v.site === 'YouTube') : null
-        
-        setTrailerKey(trailerObj ? trailerObj.key : null)
-        
-        setMovie({
-          id: details.id,
-          title: details.title || details.name,
-          year,
-          rating,
-          genre,
-          poster,
-          backdrop,
-          overview: details.overview || 'No overview available.',
-          runtime: details.runtime || 0,
-          director,
-          cast,
-          language: details.original_language ? details.original_language.toUpperCase() : 'EN'
-        })
       } catch (err) {
         console.error("API Error, falling back to dummy data:", err)
         setError("Failed to fetch from backend API. Trying offline data.")
@@ -244,11 +218,11 @@ export default function MovieDetails() {
           </section>
 
           <section className="movie-details__section">
-            <h2 className="movie-details__section-title">Trailer</h2>
-            {trailerKey ? (
+            <h2 className="movie-details__section-title">Trailer Preview</h2>
+            {movie.trailerKey ? (
               <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: '16px', border: '1px solid var(--color-border)' }}>
                 <iframe 
-                  src={`https://www.youtube.com/embed/${trailerKey}`} 
+                  src={`https://www.youtube.com/embed/${movie.trailerKey}`} 
                   title="YouTube video player" 
                   frameBorder="0" 
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
@@ -262,7 +236,7 @@ export default function MovieDetails() {
                   ▶
                 </span>
                 <p className="movie-details__trailer-text">
-                  No trailer available for this movie.
+                  Trailer is not available for this movie yet.
                 </p>
               </div>
             )}
