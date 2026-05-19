@@ -73,7 +73,17 @@ GET http://localhost:5000/api/health
 - Analyzed existing Phase 1 to Phase 3.1 structure and generated project understanding report.
 - Prepared workspace for Phase 3.2.
 
+### TMDB API Integration — Phase 3.2
+- Created `movieService.js` on frontend for API calls.
+- Built backend controllers, routes, and `tmdb.js` utility using native fetch.
+- Successfully connected backend to TMDB and created endpoints for trending, search, details, etc.
+
+### Frontend API Connection — Phase 3.3
+- Connected `Movies.jsx` and `MovieDetails.jsx` to backend TMDB routes.
+- Added TMDB data normalization, loading states, and offline dummy data fallback.
+- Replaced dummy IDs with real TMDB IDs to fix navigation and data mismatches.
+
 ### Not started yet
-- Backend (Node / Express / MongoDB)
-- TMDB & Gemini API integration
+- MongoDB Database integration
+- Gemini API integration
 - Auth, watchlist, reviews, badges logic
