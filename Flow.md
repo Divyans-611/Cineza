@@ -166,6 +166,14 @@ GET http://localhost:5000/api/health
 - Upgraded Curated Sections into a premium "Cineza Curated" zone with glassmorphism, mood tags, and smooth horizontal scroll snapping.
 - Fixed curated card layouts to be responsive and compact without breaking global pages.
 - Built a global `⌘K Search` modal in the Navbar (`GlobalSearch.jsx`) with live debounced TMDB search, keyboard shortcuts, and chip suggestions.
+- **Phase 3.5 Final Checks Completed**:
+  - Full UI consistency check & Frontend Sanity Test (Lint & Build passed).
+  - Mobile responsiveness fixes applied (Global Search modal).
+  - Poster/trailer fallback thoroughly verified (`MovieCard.jsx` and `MovieDetails.jsx`).
+  - Home page sections correctly ordered (Hero -> Featured -> Curated -> AI Picks -> Gamification -> Dock).
+  - Loading/empty/error states cleaned up across `Movies.jsx` and `MovieDetails.jsx`.
+  - Unused code assessed (`dummy movies` kept intentionally for offline fallback).
+  - `FLOW.md` documentation updated with latest progress.
 
 ### Not started yet
 - MongoDB Database integration
