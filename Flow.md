@@ -183,7 +183,20 @@ GET http://localhost:5000/api/health
 - Improved responsive UI (Navbar shortcuts wrapped, global modal bounds checked).
 - Prepared app for authentication/database phase by eliminating ESLint issues and unused variables.
 
+### Phase 4.1 — MongoDB Connection & Auth-Ready Backend · May 21, 2026
+- Connected Node.js + Express backend to MongoDB using Mongoose (`connectDB`).
+- Made database connection safe: prints standard success message and logs clean errors without leaking URI secrets.
+- Exported all auth environment variables (`mongoUri`, `jwtSecret`, `googleClientId`, etc.) in `config/index.js` securely.
+- Built a highly extensible Mongoose `User` model (`models/User.js`) supporting:
+  - Both local email/password auth and Google OAuth later.
+  - Safe pre-save password hashing with `bcryptjs`.
+  - Conditional validation (`password` required only if `authProvider` is `"local"`).
+  - Gamification state defaults (XP = 0, Level = 1, Badges = ["Cineza Rookie"]).
+- Server runs smoothly with database connected and existing TMDB API movie routes working flawlessly.
+
 ### Not started yet
-- MongoDB Database integration
+- Phase 4.2 — Auth Controllers & JWT token generation (Signup/Login backend endpoints)
+- Google OAuth backend routes integration
+- Frontend authentication forms and state management
+- MongoDB integration with reviews and watchlist
 - Gemini API integration
-- Auth, watchlist, reviews, badges logic
