@@ -41,7 +41,7 @@ export default function Navbar() {
               onClick={() => setIsSearchOpen(true)}
               aria-label="Open global search"
             >
-              <span aria-hidden="true">🔍</span> ⌘K Search
+              <span aria-hidden="true">🔍</span> <span className="shortcut-key">⌘K </span>Search
             </button>
 
             <Link to="/login" className="btn btn--primary navbar__login primary-btn" style={{ marginLeft: 0 }}>

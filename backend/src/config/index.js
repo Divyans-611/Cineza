@@ -1,3 +1,4 @@
+/* global process */
 import dotenv from 'dotenv'
 
 // Central place for environment-based settings

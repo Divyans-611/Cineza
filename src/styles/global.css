@@ -2169,6 +2169,10 @@ button {
     align-items: flex-start;
   }
   
+  .shortcut-key {
+    display: none;
+  }
+  
   .curated-shelf {
     margin-right: -1.5rem;
     padding-right: 1.5rem;

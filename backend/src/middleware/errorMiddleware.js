@@ -1,3 +1,4 @@
+/* global process */
 // 404 handler for routes that do not exist on this API
 
 export function notFound(req, res, next) {
@@ -7,7 +8,7 @@ export function notFound(req, res, next) {
 }
 
 // Global error handler — catches errors passed to next(error)
-
+// eslint-disable-next-line no-unused-vars
 export function errorHandler(err, req, res, next) {
   const statusCode = res.statusCode === 200 ? 500 : res.statusCode
 

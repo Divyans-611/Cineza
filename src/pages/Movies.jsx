@@ -165,6 +165,9 @@ export default function Movies() {
 
           {isLoading ? (
             <div className="empty-state glass-card movies-empty">
+              <span className="empty-state__icon" aria-hidden="true">
+                ⏳
+              </span>
               <p className="empty-state__title">Loading...</p>
             </div>
           ) : filteredMovies.length > 0 ? (

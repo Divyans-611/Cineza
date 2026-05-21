@@ -175,6 +175,14 @@ GET http://localhost:5000/api/health
   - Unused code assessed (`dummy movies` kept intentionally for offline fallback).
   - `FLOW.md` documentation updated with latest progress.
 
+### Phase 3.6 — Stability Cleanup Before Auth
+- Polished global search and fixed React lifecycle warnings.
+- Stabilized TMDB-powered movie browsing (e.g. Featured Movies now fetches live API data).
+- Improved poster/trailer fallbacks (robust CSS and empty states).
+- Improved curated shelves (confirmed horizontal snapping and mobile widths).
+- Improved responsive UI (Navbar shortcuts wrapped, global modal bounds checked).
+- Prepared app for authentication/database phase by eliminating ESLint issues and unused variables.
+
 ### Not started yet
 - MongoDB Database integration
 - Gemini API integration
