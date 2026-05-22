@@ -194,9 +194,20 @@ GET http://localhost:5000/api/health
   - Gamification state defaults (XP = 0, Level = 1, Badges = ["Cineza Rookie"]).
 - Server runs smoothly with database connected and existing TMDB API movie routes working flawlessly.
 
+### Phase 4.2 — Backend Auth APIs · May 22, 2026
+- Implemented backend email/password authentication using MongoDB, bcryptjs, and JWT.
+- Added register (`POST /api/auth/register`), login (`POST /api/auth/login`), and protected current-user (`GET /api/auth/me`) APIs.
+- Built `protect` JWT middleware and token generation utility safely signed by `JWT_SECRET`.
+- Restructured `User` schema pre-save hooks to support modern async/await Promise-based signatures cleanly.
+- Tested auth flow with integration tests including:
+  - Valid user registration and clean user payloads (no passwords leaked).
+  - Duplicate email and username conflicts (returns 409).
+  - Minimum password length checks (returns 400).
+  - Correct and incorrect logins (returns 200 / 401).
+  - Missing token, invalid token, and valid Bearer token profile loading.
+
 ### Not started yet
-- Phase 4.2 — Auth Controllers & JWT token generation (Signup/Login backend endpoints)
-- Google OAuth backend routes integration
+- Phase 4.3 — Google OAuth backend routes integration
 - Frontend authentication forms and state management
 - MongoDB integration with reviews and watchlist
 - Gemini API integration
