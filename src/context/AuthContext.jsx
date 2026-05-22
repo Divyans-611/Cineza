@@ -9,11 +9,16 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Helper to clear authentication state
+  // Helper to clear authentication state cleanly
   const clearAuthState = useCallback(() => {
     localStorage.removeItem('cineza_token');
     setUser(null);
     setToken(null);
+    setError(null);
+  }, []);
+
+  // Helper to clear stale auth errors
+  const clearAuthError = useCallback(() => {
     setError(null);
   }, []);
 
@@ -31,9 +36,9 @@ export const AuthProvider = ({ children }) => {
         clearAuthState();
       }
     } catch (err) {
-      console.error('Error fetching current user:', err.message);
+      console.warn('Authentication token check failed:', err.message);
+      // Clean cleanup on expired or invalid tokens without crashing the application
       clearAuthState();
-      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -41,15 +46,23 @@ export const AuthProvider = ({ children }) => {
 
   // Load token from localStorage on mount
   useEffect(() => {
+    let active = true;
     const initializeAuth = async () => {
       const savedToken = localStorage.getItem('cineza_token');
       if (savedToken) {
-        await fetchCurrentUser(savedToken);
+        if (active) {
+          await fetchCurrentUser(savedToken);
+        }
       } else {
-        setLoading(false);
+        if (active) {
+          setLoading(false);
+        }
       }
     };
     initializeAuth();
+    return () => {
+      active = false;
+    };
   }, [fetchCurrentUser]);
 
   // Handle successful registration
@@ -127,6 +140,7 @@ export const AuthProvider = ({ children }) => {
     register,
     login,
     logout,
+    clearAuthError,
     fetchCurrentUser,
     handleAuthSuccess,
   };

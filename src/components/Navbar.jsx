@@ -1,7 +1,8 @@
-import { useState } from 'react'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
-import GlobalSearch from './GlobalSearch'
+import { useState } from 'react';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { getFirstName, getInitials } from '../utils/authUtils';
+import GlobalSearch from './GlobalSearch';
 
 const navLinks = [
   { label: 'Home', to: '/' },
@@ -9,21 +10,21 @@ const navLinks = [
   { label: 'AI Picks', to: '/ai-picks' },
   { label: 'Watchlist', to: '/watchlist' },
   { label: 'Reviews', to: '/reviews' },
-]
+];
 
 function navLinkClass({ isActive }) {
-  return isActive ? 'is-active' : undefined
+  return isActive ? 'is-active' : undefined;
 }
 
 export default function Navbar() {
-  const [isSearchOpen, setIsSearchOpen] = useState(false)
-  const { isAuthenticated, user, logout } = useAuth()
-  const navigate = useNavigate()
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const { isAuthenticated, user, logout, loading } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-    logout()
-    navigate('/')
-  }
+    logout();
+    navigate('/');
+  };
 
   return (
     <>
@@ -52,11 +53,59 @@ export default function Navbar() {
               <span aria-hidden="true">🔍</span> <span className="shortcut-key">⌘K </span>Search
             </button>
 
-            {isAuthenticated ? (
+            {loading ? (
+              <div style={{ width: '120px', display: 'flex', justifyContent: 'flex-end', paddingRight: '0.5rem' }}>
+                <span className="spinning-loader" style={{ animation: 'spin 1.5s linear infinite', fontSize: '1.1rem' }}>⏳</span>
+              </div>
+            ) : isAuthenticated ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-                <Link to="/profile" className="navbar__profile-link" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--color-gold)', fontWeight: '600', fontSize: '0.9rem' }}>
-                  <span>👤</span>
-                  <span className="navbar__user-name">{user?.name?.split(' ')[0] || 'Profile'}</span>
+                <Link 
+                  to="/profile" 
+                  className="navbar__profile-link" 
+                  style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '0.5rem', 
+                    color: 'var(--color-gold)', 
+                    fontWeight: '600', 
+                    fontSize: '0.9rem',
+                    textDecoration: 'none'
+                  }}
+                >
+                  {user?.avatar ? (
+                    <img 
+                      src={user.avatar} 
+                      alt={user.name} 
+                      style={{ 
+                        width: '30px', 
+                        height: '30px', 
+                        borderRadius: '50%', 
+                        objectFit: 'cover',
+                        border: '1.5px solid var(--color-gold)'
+                      }} 
+                    />
+                  ) : (
+                    <div 
+                      style={{ 
+                        width: '30px', 
+                        height: '30px', 
+                        borderRadius: '50%', 
+                        background: 'rgba(245, 197, 24, 0.15)',
+                        border: '1.5px solid var(--color-gold)',
+                        color: 'var(--color-gold)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '0.75rem',
+                        fontWeight: '700'
+                      }}
+                    >
+                      {getInitials(user?.name)}
+                    </div>
+                  )}
+                  <span className="navbar__user-name" style={{ letterSpacing: '0.015em' }}>
+                    {getFirstName(user?.name)}
+                  </span>
                 </Link>
                 <button 
                   onClick={handleLogout} 
@@ -91,6 +140,5 @@ export default function Navbar() {
 
       <GlobalSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </>
-  )
+  );
 }
-

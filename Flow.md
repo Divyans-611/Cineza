@@ -225,6 +225,17 @@ GET http://localhost:5000/api/health
   - Authenticated users see gold profile shortcuts, display name, and full gamification indicators (Level, XP progression bars, and achievement Badges).
 - Verified compilation and build success with optimized assets successfully generated in **409ms**.
 
+### Phase 4.5 — Auth Polish & Protected User Experience · May 23, 2026
+- Developed robust client-side route guards:
+  - **`ProtectedRoute.jsx`**: Secures `/profile` by enforcing dynamic authentication status and seamlessly preserves the user's intended route redirection history.
+  - **`PublicOnlyRoute.jsx`**: Secures `/login` and `/signup` by cleanly blocking already authenticated users and auto-redirecting them to `/profile`.
+- Polished authentication context (`AuthContext.jsx`) error and expiration handlers to automatically reset localStorage and state values on token expiry without runtime crashes.
+- Created `authUtils.js` to serve modular name formatting, initials renderer, and user friendly auth provider labels.
+- Polished Login and Signup pages UX with controlled input states, backend response error alerts, button submit loading disabled indicators, and password eye togglers.
+- Optimized `AuthSuccess.jsx` to process and save Google tokens, performing history replacement redirects to delete raw tokens from visible URL parameters.
+- Re-styled Navbar and Profile page to consume new badges, level XP progress bars, rounded avatar graphics, and future-ready reviews/watchlist placeholder segments.
+- Checked frontend bundling structure: Vite compiled 55 modules inside production `dist/` with **zero warnings/errors** in **295ms**!
+
 ### Not started yet
 - MongoDB integration with reviews and watchlist
 - Gemini API integration

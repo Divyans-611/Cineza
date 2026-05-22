@@ -1,46 +1,67 @@
-import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
-import { getGoogleAuthUrl } from '../services/authService'
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
+import { useState, useEffect } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { getGoogleAuthUrl } from '../services/authService';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 export default function Login() {
-  const { login } = useAuth()
-  const navigate = useNavigate()
+  const { login, clearAuthError, error } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [errorMsg, setErrorMsg] = useState('')
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [infoMsg, setInfoMsg] = useState('');
+
+  // Extract from redirection state in React Router (e.g. from ProtectedRoute)
+  useEffect(() => {
+    clearAuthError();
+    if (location.state?.from) {
+      setInfoMsg('Please log in to continue.');
+    }
+  }, [location, clearAuthError]);
+
+  // Sync state with global authentication errors
+  useEffect(() => {
+    if (error) {
+      setErrorMsg(error);
+    }
+  }, [error]);
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     if (!email || !password) {
-      setErrorMsg('Please fill in all fields.')
-      return
+      setErrorMsg('Please fill in all fields.');
+      return;
     }
 
-    setLoading(true)
-    setErrorMsg('')
+    setLoading(true);
+    setErrorMsg('');
+    setInfoMsg('');
 
     try {
-      const res = await login({ email, password })
+      const res = await login({ email, password });
       if (res.success) {
-        navigate('/profile')
+        // Redirect back to original path if specified, otherwise profile
+        const fromPath = location.state?.from?.pathname || '/profile';
+        navigate(fromPath, { replace: true });
       } else {
-        setErrorMsg(res.error || 'Invalid credentials.')
+        setErrorMsg(res.error || 'Invalid credentials.');
       }
     } catch (err) {
-      setErrorMsg(err.message || 'Something went wrong. Please try again.')
+      setErrorMsg(err.message || 'Something went wrong. Please try again.');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleGoogleLogin = () => {
-    window.location.href = getGoogleAuthUrl()
-  }
+    window.location.href = getGoogleAuthUrl();
+  };
 
   return (
     <>
@@ -53,6 +74,12 @@ export default function Login() {
               <h1 className="section-header__title" style={{ fontSize: '1.75rem', fontWeight: '800' }}>Welcome Back</h1>
               <p className="section-header__subtitle" style={{ fontSize: '0.9rem' }}>Cinema is how we dream with our eyes open</p>
             </header>
+
+            {infoMsg && (
+              <div style={{ background: 'rgba(245, 197, 24, 0.1)', border: '1px solid var(--color-gold)', padding: '0.75rem 1rem', borderRadius: '8px', marginBottom: '1.25rem', fontSize: '0.85rem', color: 'var(--color-gold)', textAlign: 'center', fontWeight: '600' }}>
+                {infoMsg}
+              </div>
+            )}
 
             {errorMsg && (
               <div style={{ background: 'rgba(229, 9, 20, 0.1)', border: '1px solid var(--color-primary)', padding: '0.75rem 1rem', borderRadius: '8px', marginBottom: '1.25rem', fontSize: '0.85rem', color: '#ff4d4d', textAlign: 'center' }}>
@@ -70,28 +97,40 @@ export default function Login() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@example.com"
                   required
+                  disabled={loading}
                   style={{ padding: '0.75rem 1rem', background: '#0b0f19', border: '1px solid var(--color-border)', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', outline: 'none' }}
                 />
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
                 <label htmlFor="password" style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--color-muted)' }}>Password</label>
-                <input
-                  type="password"
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
-                  required
-                  style={{ padding: '0.75rem 1rem', background: '#0b0f19', border: '1px solid var(--color-border)', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', outline: 'none' }}
-                />
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter your password"
+                    required
+                    disabled={loading}
+                    style={{ padding: '0.75rem 3rem 0.75rem 1rem', background: '#0b0f19', border: '1px solid var(--color-border)', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', outline: 'none', width: '100%' }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    style={{ position: 'absolute', right: '0.75rem', background: 'transparent', border: 'none', color: 'var(--color-muted)', cursor: 'pointer', fontSize: '1.1rem', padding: '0.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', outline: 'none' }}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword ? '👁️' : '🙈'}
+                  </button>
+                </div>
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
                 className="btn btn--primary primary-btn"
-                style={{ width: '100%', marginTop: '0.5rem', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                style={{ width: '100%', marginTop: '0.5rem', display: 'flex', justifyContent: 'center', alignItems: 'center', opacity: loading ? 0.7 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}
               >
                 {loading ? 'Signing in...' : 'Sign In'}
               </button>
@@ -105,8 +144,9 @@ export default function Login() {
 
             <button
               onClick={handleGoogleLogin}
+              disabled={loading}
               className="btn btn--secondary secondary-btn"
-              style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.65rem' }}
+              style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.65rem', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}
             >
               <svg width="18" height="18" viewBox="0 0 24 24" style={{ display: 'block' }}>
                 <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v3.92h6.69c-.29 1.5-.1.84-2.45 2.4l3.83 2.97c2.24-2.07 3.675-5.11 3.675-9.22z"/>
@@ -118,9 +158,9 @@ export default function Login() {
             </button>
 
             <p style={{ marginTop: '1.75rem', textAlign: 'center', fontSize: '0.85rem', color: 'var(--color-muted)' }}>
-              Don't have an account?{' '}
+              New to Cineza?{' '}
               <Link to="/signup" style={{ color: 'var(--color-gold)', fontWeight: '600' }}>
-                Sign Up
+                Create an account
               </Link>
             </p>
           </div>
@@ -128,5 +168,5 @@ export default function Login() {
       </main>
       <Footer />
     </>
-  )
+  );
 }

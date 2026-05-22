@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
+import ProtectedRoute from './components/ProtectedRoute'
+import PublicOnlyRoute from './components/PublicOnlyRoute'
 import Home from './pages/Home'
 import Movies from './pages/Movies'
 import MovieDetails from './pages/MovieDetails'
@@ -23,9 +25,30 @@ export default function App() {
           <Route path="/ai-picks" element={<AiPicks />} />
           <Route path="/watchlist" element={<Watchlist />} />
           <Route path="/reviews" element={<Reviews />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+          <Route 
+            path="/profile" 
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/login" 
+            element={
+              <PublicOnlyRoute>
+                <Login />
+              </PublicOnlyRoute>
+            } 
+          />
+          <Route 
+            path="/signup" 
+            element={
+              <PublicOnlyRoute>
+                <Signup />
+              </PublicOnlyRoute>
+            } 
+          />
           <Route path="/auth/success" element={<AuthSuccess />} />
           <Route path="/auth-success" element={<AuthSuccess />} />
           <Route path="*" element={<NotFound />} />

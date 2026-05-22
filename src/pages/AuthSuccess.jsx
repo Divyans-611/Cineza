@@ -1,64 +1,93 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
 
 export default function AuthSuccess() {
   const { handleAuthSuccess } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
     const processToken = async () => {
-      const params = new URLSearchParams(window.location.search);
-      const token = params.get('token');
-
-      if (!token) {
-        setErrorMsg('Authentication token was missing. Please try logging in again.');
-        return;
-      }
-
       try {
+        const params = new URLSearchParams(location.search);
+        const token = params.get('token');
+
+        if (!token) {
+          setErrorMsg('Authentication token was missing. Please try logging in again.');
+          return;
+        }
+
+        // Call context success handler to save token and load profile
         const res = await handleAuthSuccess(token);
+        
         if (res.success) {
-          // Redirect to profile page after setting states successfully
-          navigate('/profile');
+          // Erase url query string by replacing navigation stack cleanly
+          navigate('/profile', { replace: true });
         } else {
-          setErrorMsg(res.error || 'Failed to authenticate with Google.');
+          setErrorMsg(res.error || 'Google Authentication failed. Please try again.');
         }
       } catch (err) {
-        setErrorMsg(err.message || 'An error occurred during Google sign in.');
+        console.error('Google Auth Success component crash:', err);
+        setErrorMsg('Something went wrong during sign in. Please try again.');
       }
     };
 
     processToken();
-  }, [handleAuthSuccess, navigate]);
+  }, [location, handleAuthSuccess, navigate]);
 
   return (
-    <>
-      <Navbar />
-      <main className="page-shell">
-        <div className="page-shell__inner" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '50vh' }}>
-          {errorMsg ? (
-            <div className="glass-card" style={{ padding: '2.5rem', maxWidth: '480px', width: '100%', textAlign: 'center', margin: '2rem auto' }}>
-              <span style={{ fontSize: '3.5rem', display: 'block', marginBottom: '1.25rem' }}>⚠️</span>
-              <h2 style={{ color: 'var(--color-primary)', marginBottom: '1rem', fontWeight: '800' }}>Authentication Failed</h2>
-              <p style={{ color: 'var(--color-muted)', marginBottom: '1.75rem', lineHeight: '1.6' }}>{errorMsg}</p>
-              <button onClick={() => navigate('/login')} className="btn btn--primary primary-btn" style={{ width: '100%' }}>
-                Back to Login
-              </button>
-            </div>
-          ) : (
-            <div className="glass-card" style={{ padding: '3.5rem', maxWidth: '480px', width: '100%', textAlign: 'center', margin: '2rem auto' }}>
-              <span className="spinning-loader" style={{ fontSize: '3.5rem', display: 'block', marginBottom: '1.5rem', animation: 'spin 2s linear infinite' }}>⏳</span>
-              <h2 style={{ marginBottom: '1rem', fontWeight: '800', letterSpacing: '-0.01em' }}>Completing Sign In</h2>
-              <p style={{ color: 'var(--color-muted)', lineHeight: '1.6' }}>Establishing secure session. You will be redirected to your profile shortly.</p>
-            </div>
-          )}
-        </div>
-      </main>
-      <Footer />
-    </>
+    <div 
+      style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        minHeight: '100vh', 
+        background: '#040714',
+        color: '#fff',
+        fontFamily: 'system-ui, -apple-system, sans-serif'
+      }}
+    >
+      <div 
+        className="glass-card" 
+        style={{ 
+          padding: '3rem', 
+          maxWidth: '440px', 
+          width: '90%', 
+          textAlign: 'center',
+          boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)'
+        }}
+      >
+        {errorMsg ? (
+          <div>
+            <span style={{ fontSize: '3.5rem', display: 'block', marginBottom: '1rem' }} aria-hidden="true">⚠️</span>
+            <h1 style={{ color: 'var(--color-primary)', fontSize: '1.5rem', fontWeight: '800', marginBottom: '0.75rem' }}>
+              Authentication Failed
+            </h1>
+            <p style={{ color: 'var(--color-muted)', fontSize: '0.9rem', lineHeight: '1.5', marginBottom: '2rem' }}>
+              {errorMsg}
+            </p>
+            <button 
+              onClick={() => navigate('/login', { replace: true })}
+              className="btn btn--primary primary-btn"
+              style={{ width: '100%', padding: '0.75rem' }}
+            >
+              Back to Login
+            </button>
+          </div>
+        ) : (
+          <div>
+            <span className="spinning-loader" style={{ fontSize: '4rem', display: 'block', marginBottom: '1.25rem', animation: 'spin 2.5s linear infinite' }} aria-hidden="true">⏳</span>
+            <h1 style={{ fontSize: '1.6rem', fontWeight: '800', marginBottom: '0.5rem', letterSpacing: '-0.02em', color: 'var(--color-gold)' }}>
+              Completing Sign In
+            </h1>
+            <p style={{ color: 'var(--color-muted)', fontSize: '0.9rem', margin: 0 }}>
+              Establishing secure session. You will be redirected to your profile shortly.
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
