@@ -1,6 +1,8 @@
 import express from 'express'
 import cors from 'cors'
+import session from 'express-session'
 import config from './config/index.js'
+import passport from './config/passport.js'
 import healthRoutes from './routes/healthRoutes.js'
 import movieRoutes from './routes/movieRoutes.js'
 import authRoutes from './routes/authRoutes.js'
@@ -17,6 +19,19 @@ app.use(
 
 // Parse JSON request bodies
 app.use(express.json())
+
+// Session configuration (required by passport)
+app.use(
+  session({
+    secret: config.jwtSecret || 'cineza_session_secret',
+    resave: false,
+    saveUninitialized: false,
+  }),
+)
+
+// Initialize Passport and Session support
+app.use(passport.initialize())
+app.use(passport.session())
 
 // API routes
 app.use('/api', healthRoutes)
