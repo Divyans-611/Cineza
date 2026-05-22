@@ -44,3 +44,6 @@ backend/node_modules/
 *.njsproj
 *.sln
 *.sw?
+
+# Testing
+backend/test_auth.js
