@@ -207,13 +207,12 @@ GET http://localhost:5000/api/health
   - Missing token, invalid token, and valid Bearer token profile loading.
 
 ### Phase 4.3 — Google OAuth Backend Integration · May 22, 2026
-- Integrated Google OAuth 2.0 backend endpoints using Passport.js (`passport-google-oauth20`) and Express Sessions (`express-session`).
-- Created robust Google Passport Strategy configuration (`config/passport.js`) featuring safety fallback strings for Client ID and Secret to prevent backend startup crashes in local/offline environment setups.
-- Configured dynamic Google account linkage: checks if Google account exists, checks by email to link local account safely, otherwise registers a new profile with `authProvider: "google"`.
-- Mounted passport middlewares in `app.js` and defined Google routes in `authRoutes.js`:
-  - `GET /api/auth/google`: Triggers Google OAuth sign-in flow (scope: profile, email).
-  - `GET /api/auth/google/callback`: Redirects back to client app (`/auth-success?token=<token>`) with a signed JWT on success.
-- Verified redirection flow successfully (Status 302 Found) to Google accounts server.
+- Implemented Google OAuth backend authentication using Passport.js.
+- Added Google login (`GET /api/auth/google`) and callback (`GET /api/auth/google/callback`) routes.
+- Google users are successfully created or linked in MongoDB.
+- JWT token is generated after successful Google login and redirected to frontend.
+- Google token was tested successfully with `GET /api/auth/me` to fetch current profile.
+- Existing email/password local authentication remains fully working and verified.
 
 ### Not started yet
 - Frontend authentication forms and state management
