@@ -214,7 +214,17 @@ GET http://localhost:5000/api/health
 - Google token was tested successfully with `GET /api/auth/me` to fetch current profile.
 - Existing email/password local authentication remains fully working and verified.
 
+### Phase 4.4 — Frontend Auth Integration · May 22, 2026
+- Built `authService.js` to execute frontend requests (`register`, `login`, `me`, `google`) using standard `fetch`.
+- Implemented global `AuthContext` and custom `useAuth` hook. Restructures and stores JWT token in `localStorage` under `cineza_token`, supporting persistence across refreshes.
+- Created `Signup` and `Login` pages using Cineza's premium glassmorphic UI cards, with credential validations and Google Social login redirections.
+- Built `/auth/success` callback page (`AuthSuccess.jsx`) to capture redirect query tokens and establish sessions securely.
+- Resolved Google OAuth redirect mismatch by registering both `/auth/success` and `/auth-success` (hyphen format matching the backend) routes under `App.jsx`, ensuring robust callback resolution.
+- Updated `Navbar` and `Profile` pages to dynamically consume authentication state:
+  - Unauthenticated users see red "Login" button and inline access restrictions on `/profile`.
+  - Authenticated users see gold profile shortcuts, display name, and full gamification indicators (Level, XP progression bars, and achievement Badges).
+- Verified compilation and build success with optimized assets successfully generated in **409ms**.
+
 ### Not started yet
-- Frontend authentication forms and state management
 - MongoDB integration with reviews and watchlist
 - Gemini API integration

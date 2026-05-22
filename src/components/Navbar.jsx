@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import GlobalSearch from './GlobalSearch'
 
 const navLinks = [
@@ -15,7 +16,14 @@ function navLinkClass({ isActive }) {
 }
 
 export default function Navbar() {
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const { isAuthenticated, user, logout } = useAuth()
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logout()
+    navigate('/')
+  }
 
   return (
     <>
@@ -35,7 +43,7 @@ export default function Navbar() {
             ))}
           </ul>
 
-          <div className="navbar__actions" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginLeft: 'auto' }}>
+          <div className="navbar__actions" style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginLeft: 'auto' }}>
             <button 
               className="global-search-trigger" 
               onClick={() => setIsSearchOpen(true)}
@@ -44,9 +52,25 @@ export default function Navbar() {
               <span aria-hidden="true">🔍</span> <span className="shortcut-key">⌘K </span>Search
             </button>
 
-            <Link to="/login" className="btn btn--primary navbar__login primary-btn" style={{ marginLeft: 0 }}>
-              Login
-            </Link>
+            {isAuthenticated ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                <Link to="/profile" className="navbar__profile-link" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--color-gold)', fontWeight: '600', fontSize: '0.9rem' }}>
+                  <span>👤</span>
+                  <span className="navbar__user-name">{user?.name?.split(' ')[0] || 'Profile'}</span>
+                </Link>
+                <button 
+                  onClick={handleLogout} 
+                  className="btn btn--secondary" 
+                  style={{ padding: '0.45rem 0.9rem', fontSize: '0.8rem', whiteSpace: 'nowrap' }}
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <Link to="/login" className="btn btn--primary navbar__login primary-btn" style={{ marginLeft: 0 }}>
+                Login
+              </Link>
+            )}
           </div>
         </nav>
 
