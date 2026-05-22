@@ -206,8 +206,16 @@ GET http://localhost:5000/api/health
   - Correct and incorrect logins (returns 200 / 401).
   - Missing token, invalid token, and valid Bearer token profile loading.
 
+### Phase 4.3 — Google OAuth Backend Integration · May 22, 2026
+- Integrated Google OAuth 2.0 backend endpoints using Passport.js (`passport-google-oauth20`) and Express Sessions (`express-session`).
+- Created robust Google Passport Strategy configuration (`config/passport.js`) featuring safety fallback strings for Client ID and Secret to prevent backend startup crashes in local/offline environment setups.
+- Configured dynamic Google account linkage: checks if Google account exists, checks by email to link local account safely, otherwise registers a new profile with `authProvider: "google"`.
+- Mounted passport middlewares in `app.js` and defined Google routes in `authRoutes.js`:
+  - `GET /api/auth/google`: Triggers Google OAuth sign-in flow (scope: profile, email).
+  - `GET /api/auth/google/callback`: Redirects back to client app (`/auth-success?token=<token>`) with a signed JWT on success.
+- Verified redirection flow successfully (Status 302 Found) to Google accounts server.
+
 ### Not started yet
-- Phase 4.3 — Google OAuth backend routes integration
 - Frontend authentication forms and state management
 - MongoDB integration with reviews and watchlist
 - Gemini API integration
