@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import MovieCard from '../components/MovieCard'
 import { getMovieById as getDummyMovieById, getSimilarMovies } from '../data/movies'
 import { getMovieDetails, getMovieCredits, getMovieVideos } from '../services/movieService'
 import { normalizeTMDBDetails } from '../utils/movieUtils'
+import { useAuth } from '../context/AuthContext'
+import { addToWatchlist, removeFromWatchlist, checkWatchlist } from '../services/watchlistService'
 
 function getPlaceholderReviews(movie) {
   return [
@@ -64,10 +66,88 @@ function MovieNotFound() {
 
 export default function MovieDetails() {
   const { id } = useParams()
+  const navigate = useNavigate()
+  const { isAuthenticated, token } = useAuth()
+
   const [movie, setMovie] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
   const [posterFailed, setPosterFailed] = useState(false)
+
+  const [isInWatchlist, setIsInWatchlist] = useState(false)
+  const [watchlistLoading, setWatchlistLoading] = useState(false)
+  const [watchlistMessage, setWatchlistMessage] = useState(null)
+
+  // Clear message after 3 seconds
+  useEffect(() => {
+    if (watchlistMessage) {
+      const timer = setTimeout(() => setWatchlistMessage(null), 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [watchlistMessage])
+
+  // Check watchlist status when movie loads
+  useEffect(() => {
+    const checkStatus = async () => {
+      if (isAuthenticated && token && movie?.id) {
+        try {
+          const res = await checkWatchlist(movie.id, token)
+          setIsInWatchlist(res.inWatchlist)
+        } catch (err) {
+          console.error('Failed to check watchlist status:', err)
+        }
+      }
+    }
+    checkStatus()
+  }, [isAuthenticated, token, movie])
+
+  // Toggle watchlist logic
+  const handleWatchlistToggle = async () => {
+    if (!isAuthenticated) {
+      navigate('/login')
+      return
+    }
+
+    setWatchlistLoading(true)
+    setWatchlistMessage(null)
+
+    try {
+      if (isInWatchlist) {
+        await removeFromWatchlist(movie.id, token)
+        setIsInWatchlist(false)
+        setWatchlistMessage({ type: 'success', text: 'Removed from watchlist' })
+      } else {
+        // Format genres
+        let formattedGenres = []
+        if (Array.isArray(movie.genre)) {
+          formattedGenres = movie.genre
+        } else if (typeof movie.genre === 'string') {
+          formattedGenres = movie.genre.split(',').map(g => g.trim())
+        } else if (movie.genres && Array.isArray(movie.genres)) {
+          formattedGenres = movie.genres.map(g => g.name || g)
+        }
+
+        const movieData = {
+          movieId: movie.id,
+          title: movie.title,
+          posterPath: movie.poster_path || movie.posterPath || movie.poster || '',
+          backdropPath: movie.backdrop_path || movie.backdropPath || movie.backdrop || '',
+          releaseDate: movie.release_date || movie.releaseDate || movie.year || '',
+          rating: movie.vote_average || movie.rating || 0,
+          overview: movie.overview || '',
+          genres: formattedGenres,
+        }
+
+        await addToWatchlist(movieData, token)
+        setIsInWatchlist(true)
+        setWatchlistMessage({ type: 'success', text: 'Added to watchlist' })
+      }
+    } catch (err) {
+      setWatchlistMessage({ type: 'error', text: err.message || 'Operation failed' })
+    } finally {
+      setWatchlistLoading(false)
+    }
+  }
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -192,13 +272,31 @@ export default function MovieDetails() {
               <p className="movie-details__overview">{movie.overview}</p>
 
               <div className="movie-details__actions">
-                <button
-                  type="button"
-                  className="btn btn--primary"
-                  onClick={handleAction}
-                >
-                  Add to Watchlist
-                </button>
+                <div className="movie-details__watchlist-action" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                  {!isAuthenticated ? (
+                    <button
+                      type="button"
+                      className="btn btn--secondary"
+                      onClick={() => navigate('/login')}
+                    >
+                      Login to save
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className={`btn ${isInWatchlist ? 'btn--in-watchlist' : 'btn--primary'}`}
+                      onClick={handleWatchlistToggle}
+                      disabled={watchlistLoading}
+                    >
+                      {watchlistLoading ? 'Wait...' : isInWatchlist ? '✓ In Watchlist' : '+ Add to Watchlist'}
+                    </button>
+                  )}
+                  {watchlistMessage && (
+                    <span className={`watchlist-message watchlist-message--${watchlistMessage.type}`}>
+                      {watchlistMessage.text}
+                    </span>
+                  )}
+                </div>
                 <button
                   type="button"
                   className="btn btn--secondary"

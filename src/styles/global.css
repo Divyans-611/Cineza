@@ -107,6 +107,34 @@ button {
   border-color: var(--color-gold);
 }
 
+.btn--in-watchlist {
+  color: var(--color-gold);
+  background: rgba(245, 197, 24, 0.05);
+  border: 1px solid var(--color-gold);
+  box-shadow: 0 0 10px rgba(245, 197, 24, 0.1);
+  position: relative;
+}
+
+.btn--in-watchlist:hover {
+  background: rgba(229, 9, 20, 0.1);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.watchlist-message {
+  font-size: 0.85rem;
+  font-weight: 500;
+  animation: fadeIn 0.3s ease;
+}
+
+.watchlist-message--success {
+  color: #10b981;
+}
+
+.watchlist-message--error {
+  color: var(--color-primary);
+}
+
 /* Utility aliases */
 .primary-btn {
   /* uses .btn--primary */

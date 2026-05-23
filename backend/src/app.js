@@ -6,6 +6,7 @@ import passport from './config/passport.js'
 import healthRoutes from './routes/healthRoutes.js'
 import movieRoutes from './routes/movieRoutes.js'
 import authRoutes from './routes/authRoutes.js'
+import watchlistRoutes from './routes/watchlistRoutes.js'
 import { notFound, errorHandler } from './middleware/errorMiddleware.js'
 
 const app = express()
@@ -37,6 +38,7 @@ app.use(passport.session())
 app.use('/api', healthRoutes)
 app.use('/api/movies', movieRoutes)
 app.use('/api/auth', authRoutes)
+app.use('/api/watchlist', watchlistRoutes)
 
 // Unknown routes and errors (order matters)
 app.use(notFound)
