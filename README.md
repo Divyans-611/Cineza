@@ -13,7 +13,7 @@ The idea is to make movie discovery more personal, social, and fun by adding AI-
 - Build a user profile based on movie taste
 - Earn badges, XP, and achievements for movie activity
 - Get AI-based movie suggestions according to mood, genre, and preferences
-- Clean and responsive UI for mobile and desktop
+- Clean and responsive UI for mobile and deskstop.
 
 ## Tech Stack
 - React.js
