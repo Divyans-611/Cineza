@@ -3,10 +3,30 @@ import { useAuth } from '../context/AuthContext';
 import { getAuthProviderLabel, getInitials } from '../utils/authUtils';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { useState, useEffect } from 'react';
+import { getWatchlist } from '../services/watchlistService';
+
 
 export default function Profile() {
-  const { user, logout } = useAuth();
+  const { user, logout, token } = useAuth();
   const navigate = useNavigate();
+  const [watchlistCount, setWatchlistCount] = useState(0);
+
+  useEffect(() => {
+    const fetchWatchlistCount = async () => {
+      if (user && token) {
+        try {
+          const res = await getWatchlist(token);
+          if (res.success) {
+            setWatchlistCount(res.data.length);
+          }
+        } catch (error) {
+          console.error("Failed to load watchlist count", error);
+        }
+      }
+    };
+    fetchWatchlistCount();
+  }, [user, token]);
 
   // Guard fallback (though ProtectedRoute secures this page)
   if (!user) return null;
@@ -197,13 +217,16 @@ export default function Profile() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))', gap: '1.5rem' }}>
               
               {/* Watchlist sync placeholder */}
-              <div className="glass-card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '1rem', border: '1px dashed var(--color-border)' }}>
+              <div className="glass-card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '1rem', border: '1px solid var(--color-border)' }}>
                 <span style={{ fontSize: '2.5rem' }}>📂</span>
                 <div>
-                  <h4 style={{ margin: '0 0 0.5rem', fontSize: '1.1rem', fontWeight: '700' }}>CineWatchlist</h4>
-                  <p style={{ fontSize: '0.85rem', color: 'var(--color-muted)', lineHeight: '1.5', margin: 0 }}>
-                    Your personal movie vault is ready. In the next phase, you'll be able to save TMDB movies directly to your MongoDB account.
+                  <h4 style={{ margin: '0 0 0.5rem', fontSize: '1.1rem', fontWeight: '700' }}>My Watchlist</h4>
+                  <p style={{ fontSize: '0.85rem', color: 'var(--color-gold)', fontWeight: '600', marginBottom: '1rem' }}>
+                    {watchlistCount} movies saved
                   </p>
+                  <button onClick={() => navigate('/watchlist')} className="btn btn--secondary" style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}>
+                    View Watchlist
+                  </button>
                 </div>
               </div>
 
