@@ -127,13 +127,16 @@ export default function MovieDetails() {
           formattedGenres = movie.genres.map(g => g.name || g)
         }
 
+        const rawRating = movie.vote_average ?? movie.rating;
+        const safeRating = Number(rawRating);
+
         const movieData = {
           movieId: movie.id,
           title: movie.title,
           posterPath: movie.poster_path || movie.posterPath || movie.poster || '',
           backdropPath: movie.backdrop_path || movie.backdropPath || movie.backdrop || '',
           releaseDate: movie.release_date || movie.releaseDate || movie.year || '',
-          rating: movie.vote_average || movie.rating || 0,
+          rating: Number.isFinite(safeRating) ? safeRating : 0,
           overview: movie.overview || '',
           genres: formattedGenres,
         }
