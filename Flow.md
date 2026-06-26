@@ -236,6 +236,29 @@ GET http://localhost:5000/api/health
 - Re-styled Navbar and Profile page to consume new badges, level XP progress bars, rounded avatar graphics, and future-ready reviews/watchlist placeholder segments.
 - Checked frontend bundling structure: Vite compiled 55 modules inside production `dist/` with **zero warnings/errors** in **295ms**!
 
+## May 23 – May 24, 2026
+
+### Phase 5.1 — MongoDB Watchlist Backend Setup · May 23, 2026
+- Built a Mongoose `Watchlist` schema (`models/Watchlist.js`) mapping to users. Implemented compound unique indices (`user_1_movieId_1`) to enforce unique watchlist items per user.
+- Implemented watchlist controllers (`watchlistController.js`) and routes (`watchlistRoutes.js`) supporting:
+  - Add to watchlist (`POST /api/watchlist`)
+  - Retrieve user watchlist (`GET /api/watchlist`)
+  - Remove from watchlist (`DELETE /api/watchlist/:movieId`)
+  - Check if movie is saved (`GET /api/watchlist/check/:movieId`)
+- Integrated routes into the main Express application (`app.js`).
+
+### Phase 5.2 — Frontend Watchlist & Details Integration · May 24, 2026
+- Built `watchlistService.js` to execute API requests to backend watchlist endpoints.
+- Implemented `/watchlist` page (`Watchlist.jsx`) to display saved movies using glassmorphism cards. Supported dynamic sorting filters (Recently Added, Highest Rated, Title A-Z) and optimistic deletion updates.
+- Integrated watchlist toggle trigger inside `MovieDetails.jsx`. Buttons dynamically update based on watchlist status (e.g. `✓ In Watchlist` vs `+ Add to Watchlist`), showing loading spinners and toast notifications.
+- Created `WatchlistCard.jsx` to render watchlist movies with a quick remove overlay.
+
+### Phase 5.3 — Validation & Rating Fixes · May 24, 2026
+- Fixed movie rating formatting and edge case data validations in `MovieDetails.jsx` to ensure clean numbers are saved to the database (fallback values checked via `Number.isFinite`).
+- Verified database sync and routing locks (only authenticated users can save items to the watchlist, redirecting anonymous users to login).
+
 ### Not started yet
-- MongoDB integration with reviews and watchlist
-- Gemini API integration
+- MongoDB integration with reviews
+- Gamification mechanics logic (XP awards, level-ups, badge calculations)
+- Gemini API integration (AI Picks recommendation engine)
+
