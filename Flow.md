@@ -257,8 +257,18 @@ GET http://localhost:5000/api/health
 - Fixed movie rating formatting and edge case data validations in `MovieDetails.jsx` to ensure clean numbers are saved to the database (fallback values checked via `Number.isFinite`).
 - Verified database sync and routing locks (only authenticated users can save items to the watchlist, redirecting anonymous users to login).
 
+## June 26, 2026
+
+### Phase 5.4 — TMDB API Connection Hotfix (DNS Resolution Bypass) · June 26, 2026
+- Diagnosed TMDB API `fetch failed` connection timeouts in backend logs.
+- Identified that ISP-level DNS hijacking (e.g. Jio blocking TMDB domains in India) redirected `api.themoviedb.org` queries to a block page IP (`49.44.79.236`), causing HTTPS connection timeouts.
+- Patched DNS resolution globally at startup in `backend/src/server.js` by overriding `dns.lookup`. 
+- Overridden function intercepts queries to TMDB API domains (`*.themoviedb.org`, `*.tmdb.org`) and resolves them directly using public DNS services (Google `8.8.8.8` and Cloudflare `1.1.1.1`), while supporting both single address and full query result list formats (`options.all`), and falling back to default OS resolution for other requests.
+- Restored flawless fetching on all movie routes (`/api/movies/trending`, etc.).
+
 ### Not started yet
 - MongoDB integration with reviews
 - Gamification mechanics logic (XP awards, level-ups, badge calculations)
 - Gemini API integration (AI Picks recommendation engine)
+
 
