@@ -291,3 +291,7 @@ GET http://localhost:5000/api/health
 
 
 
+## Phase 6.4 — Review API Testing (Postman) – 2026-06-27
+- Executed the Postman testing guide, validated all Review endpoints (create, duplicate, invalid rating, fetch, update, delete, unauthorized).
+- All tests passed, confirming correct functionality and error handling.
+- Documented results in the testing guide and prepared for next phases.
