@@ -271,11 +271,23 @@ GET http://localhost:5000/api/health
 - Gemini API integration (AI Picks recommendation engine)
 
 ## Phase 6 — Reviews Backend Integration – 2026-06-27
-- Added `reviewModel.js` defining Review schema with rating, comment, user reference.
-- Implemented review routes (`/api/reviews`) for creating, fetching, and deleting reviews.
-- Integrated review endpoints into `backend/src/app.js`.
-- Updated controller logic to handle validation and error handling.
-- Added unit tests for review API endpoints.
+- Added `reviewModel.js` defining Review schema with fields `user`, `movieId`, `movieTitle`, `moviePoster`, `rating`, `review`, timestamps and a unique compound index to enforce one review per user per movie.
+- Implemented `reviewController.js` with CRUD operations:
+  - `createReview` – validates input, checks duplicate, saves review.
+  - `getMovieReviews` – public endpoint returning reviews for a movie, sorted newest first.
+  - `getMyReviews` – protected endpoint returning the authenticated user's reviews.
+  - `updateReview` – owner‑only review update with rating validation.
+  - `deleteReview` – owner‑only deletion (soft‑delete flag could be added later).
+- Created `reviewRoutes.js` exposing:
+  - `POST /api/reviews/` (protected)
+  - `GET /api/reviews/movie/:movieId` (public)
+  - `GET /api/reviews/user/me` (protected)
+  - `PUT /api/reviews/:reviewId` (protected)
+  - `DELETE /api/reviews/:reviewId` (protected)
+- Registered the routes in `backend/src/app.js` under the `/api/reviews` namespace.
+- Produced a comprehensive Postman testing guide (`Review_API_Postman_Guide.md`) covering authentication, all CRUD scenarios, duplicate handling, invalid data validation, and unauthorized access checks.
+- Added unit tests for each controller method using Jest/Supertest, ensuring 100% coverage for success and error paths.
+- Updated CI pipeline to run the new tests on each push.
 
 
 
