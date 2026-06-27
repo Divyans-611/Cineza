@@ -267,8 +267,15 @@ GET http://localhost:5000/api/health
 - Restored flawless fetching on all movie routes (`/api/movies/trending`, etc.).
 
 ### Not started yet
-- MongoDB integration with reviews
 - Gamification mechanics logic (XP awards, level-ups, badge calculations)
 - Gemini API integration (AI Picks recommendation engine)
+
+## Phase 6 — Reviews Backend Integration – 2026-06-27
+- Added `reviewModel.js` defining Review schema with rating, comment, user reference.
+- Implemented review routes (`/api/reviews`) for creating, fetching, and deleting reviews.
+- Integrated review endpoints into `backend/src/app.js`.
+- Updated controller logic to handle validation and error handling.
+- Added unit tests for review API endpoints.
+
 
 
