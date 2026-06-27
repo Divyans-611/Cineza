@@ -9,6 +9,7 @@ import { normalizeTMDBDetails } from '../utils/movieUtils'
 import { useAuth } from '../context/AuthContext'
 import { addToWatchlist, removeFromWatchlist, checkWatchlist } from '../services/watchlistService'
 
+
 function getPlaceholderReviews(movie) {
   return [
     {
@@ -343,24 +344,7 @@ export default function MovieDetails() {
             )}
           </section>
 
-          <section className="movie-details__section">
-            <h2 className="movie-details__section-title">Community Reviews</h2>
-            <p className="movie-details__section-note">
-              Placeholder reviews — real community data coming later.
-            </p>
-            <div className="movie-details__reviews">
-              {reviews.map((review) => (
-                <article key={review.id} className="review-card">
-                  <div className="review-card__header">
-                    <span className="review-card__user">@{review.username}</span>
-                    <span className="review-card__rating">★ {review.rating}</span>
-                  </div>
-                  <p className="review-card__text">{review.text}</p>
-                  <time className="review-card__date">{review.date}</time>
-                </article>
-              ))}
-            </div>
-          </section>
+
 
           {similarMovies.length > 0 && (
             <section className="movie-details__section">
