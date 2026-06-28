@@ -356,6 +356,7 @@ export default function MovieDetails() {
               </div>
             </section>
           )}
+          <ReviewsSection movieId={movie.id} />
         </div>
       </main>
       <Footer />

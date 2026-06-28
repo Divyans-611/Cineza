@@ -1,13 +1,13 @@
 // src/services/reviewService.js
 // Service layer for Review API calls
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || " http://localhost:5000\;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
 /** Helper to build Authorization header if token is provided */
-const authHeaders = (token) => (token ? { Authorization: Bearer } : {});
+const authHeaders = (token) => (token ? { Authorization: `Bearer ${token}` } : {});
 
 export const getMovieReviews = async (movieId) => {
- const response = await fetch(${API_BASE_URL}/api/reviews/movie/);
+ const response = await fetch(`${API_BASE_URL}/api/reviews/movie/${movieId}`);
  const json = await response.json();
  if (!json.success) {
  throw new Error(json.message || 'Failed to fetch reviews');
