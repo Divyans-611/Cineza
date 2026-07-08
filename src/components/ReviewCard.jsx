@@ -6,17 +6,23 @@ import PropTypes from 'prop-types';
 
 export default function ReviewCard({ review, onRefresh }) {
   const { user, token } = useAuth();
-  const isOwner = user && (review.username === user.username || review.userId === user.id);
+  // Backend populates user as object with _id; review.user._id or review.user may be string
+  const reviewUserId = review.user?._id || review.user;
+  const isOwner = user && (
+    review.username === user.username ||
+    String(reviewUserId) === String(user.id || user._id)
+  );
   const [editMode, setEditMode] = useState(false);
   const [rating, setRating] = useState(Number(review.rating));
-  const [text, setText] = useState(review.text);
+  // Backend field is 'review', not 'text'
+  const [text, setText] = useState(review.review || review.text || '');
   const [submitting, setSubmitting] = useState(false);
 
   const handleDelete = async () => {
     if (!token) return;
     setSubmitting(true);
     try {
-      await reviewService.deleteReview(review.id, token);
+      await reviewService.deleteReview(review._id || review.id, token);
       onRefresh();
     } catch (err) {
       console.error('Delete review failed', err);
@@ -29,7 +35,8 @@ export default function ReviewCard({ review, onRefresh }) {
     if (!token) return;
     setSubmitting(true);
     try {
-      await reviewService.updateReview(review.id, { rating, text }, token);
+      // Backend field for review text is 'review', not 'text'
+      await reviewService.updateReview(review._id || review.id, { rating, review: text }, token);
       setEditMode(false);
       onRefresh();
     } catch (err) {
@@ -57,20 +64,27 @@ export default function ReviewCard({ review, onRefresh }) {
     return <div className="review-card__stars">{stars}</div>;
   };
 
+  // Format date from createdAt if no date field
+  const displayDate = review.date ||
+    (review.createdAt ? new Date(review.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '');
+
+  // Display name: from populated user.name or review.username
+  const displayUsername = review.username || review.user?.name || 'Anonymous';
+
   return (
     <div className="review-card glass-card">
       <div className="review-card__header">
         <div className="review-card__avatar">
           <img
-            src={review.avatarUrl || 'https://www.gravatar.com/avatar/placeholder?d=identicon'}
-            alt={`${review.username} avatar`}
+            src={review.user?.avatar || review.avatarUrl || `https://www.gravatar.com/avatar/${displayUsername}?d=identicon`}
+            alt={`${displayUsername} avatar`}
             loading="lazy"
           />
         </div>
         <div className="review-card__meta">
-          <span className="review-card__user">{review.username}</span>
+          <span className="review-card__user">{displayUsername}</span>
           {editMode ? renderStars(rating, true) : renderStars(Number(review.rating), false)}
-          <span className="review-card__date">{review.date}</span>
+          <span className="review-card__date">{displayDate}</span>
         </div>
         {isOwner && !editMode && (
           <div className="review-card__actions">
@@ -92,7 +106,7 @@ export default function ReviewCard({ review, onRefresh }) {
           maxLength={500}
         />
       ) : (
-        <p className="review-card__text">{review.text}</p>
+        <p className="review-card__text">{review.review || review.text}</p>
       )}
 
       {editMode && (
@@ -111,13 +125,15 @@ export default function ReviewCard({ review, onRefresh }) {
 
 ReviewCard.propTypes = {
   review: PropTypes.shape({
-    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-    username: PropTypes.string.isRequired,
+    _id: PropTypes.string,
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    username: PropTypes.string,
     rating: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     date: PropTypes.string,
-    text: PropTypes.string.isRequired,
+    review: PropTypes.string,
+    text: PropTypes.string,
     avatarUrl: PropTypes.string,
-    userId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    user: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   }).isRequired,
   onRefresh: PropTypes.func.isRequired,
 };

@@ -17,7 +17,6 @@ export default function GlobalSearch({ isOpen, onClose }) {
     if (isOpen) {
       setTimeout(() => inputRef.current?.focus(), 100);
     } else {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setQuery('');
       setResults([]);
       setError(null);
@@ -39,7 +38,6 @@ export default function GlobalSearch({ isOpen, onClose }) {
   useEffect(() => {
     const trimmedQuery = query.trim();
     if (trimmedQuery.length < 2) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setResults([]);
       setIsLoading(false);
       setError(null);

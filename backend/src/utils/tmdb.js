@@ -35,13 +35,18 @@ export const fetchFromTMDB = async (endpoint, params = {}) => {
     // If the request failed, try to extract TMDB's error message
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
-      throw new Error(errorData.status_message || `TMDB API error: ${response.status}`)
+      const errorMessage = errorData.status_message || `TMDB API error: ${response.status}`
+      console.error('TMDB API Error:', {
+        status: response.status,
+        body: errorData,
+        url: url.toString()
+      })
+      throw new Error(errorMessage)
     }
 
     return await response.json()
   } catch (error) {
-    // Do not log the full URL to avoid leaking the API key in the console
-    console.error(`Error fetching from TMDB endpoint ${endpoint}: ${error.message}`)
+    console.error(`Error fetching from TMDB endpoint ${endpoint}:`, error)
     throw error // Re-throw so the controller can pass it to the error handler
   }
 }

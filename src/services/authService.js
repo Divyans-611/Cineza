@@ -8,7 +8,7 @@ const handleResponse = async (res) => {
   try {
     json = await res.json();
   } catch (error) {
-    throw new Error('Server returned an invalid response.');
+    throw new Error('Server returned an invalid response.', { cause: error });
   }
 
   if (!res.ok || !json.success) {

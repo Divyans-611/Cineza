@@ -97,9 +97,9 @@ export const getMyReviews = async (req, res, next) => {
 // @access  Private (owner only)
 export const updateReview = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { reviewId } = req.params;
     const { rating, review } = req.body || {};
-    const existing = await Review.findById(id);
+    const existing = await Review.findById(reviewId);
     if (!existing) {
       res.status(404);
       const err = new Error('Review not found');
@@ -146,8 +146,8 @@ export const updateReview = async (req, res, next) => {
 // @access  Private (owner only)
 export const deleteReview = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const existing = await Review.findById(id);
+    const { reviewId } = req.params;
+    const existing = await Review.findById(reviewId);
     if (!existing) {
       res.status(404);
       const err = new Error('Review not found');
@@ -158,7 +158,7 @@ export const deleteReview = async (req, res, next) => {
       const err = new Error('Not authorized to delete this review');
       return next(err);
     }
-    await Review.findByIdAndDelete(id);
+    await Review.findByIdAndDelete(reviewId);
     return res.status(200).json({
       success: true,
       message: 'Review deleted successfully',

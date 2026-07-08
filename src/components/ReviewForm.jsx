@@ -4,11 +4,12 @@ import * as reviewService from '../services/reviewService';
 import { useAuth } from '../context/AuthContext';
 import PropTypes from 'prop-types';
 
-export default function ReviewForm({ movieId, onRefresh }) {
+export default function ReviewForm({ movieId, movieTitle, moviePoster, onRefresh }) {
   const { token } = useAuth();
   const [rating, setRating] = useState(0);
   const [text, setText] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState(null);
   const maxLength = 500;
 
   const handleSubmit = async (e) => {
@@ -16,13 +17,22 @@ export default function ReviewForm({ movieId, onRefresh }) {
     if (!rating || !text.trim()) return;
     if (!token) return;
     setSubmitting(true);
+    setErrorMsg(null);
     try {
-      await reviewService.createReview({ movieId, rating, text }, token);
+      // Backend requires: movieId, movieTitle, rating, review (not 'text')
+      await reviewService.createReview({
+        movieId,
+        movieTitle: movieTitle || String(movieId),
+        moviePoster: moviePoster || '',
+        rating,
+        review: text,   // backend field is 'review', not 'text'
+      }, token);
       setRating(0);
       setText('');
       onRefresh();
     } catch (err) {
       console.error('Create review failed', err);
+      setErrorMsg(err.message || 'Failed to submit review.');
     } finally {
       setSubmitting(false);
     }
@@ -59,6 +69,11 @@ export default function ReviewForm({ movieId, onRefresh }) {
         rows={4}
         required
       />
+      {errorMsg && (
+        <p style={{ color: 'var(--color-accent, #e50914)', fontSize: '0.85rem', marginTop: '0.5rem' }}>
+          ⚠️ {errorMsg}
+        </p>
+      )}
       <div className="review-form__footer">
         <span className="review-form__counter">
           {text.length}/{maxLength}
@@ -77,5 +92,7 @@ export default function ReviewForm({ movieId, onRefresh }) {
 
 ReviewForm.propTypes = {
   movieId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  movieTitle: PropTypes.string,
+  moviePoster: PropTypes.string,
   onRefresh: PropTypes.func.isRequired,
 };

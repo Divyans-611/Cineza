@@ -8,33 +8,9 @@ import { getMovieDetails, getMovieCredits, getMovieVideos } from '../services/mo
 import { normalizeTMDBDetails } from '../utils/movieUtils'
 import { useAuth } from '../context/AuthContext'
 import { addToWatchlist, removeFromWatchlist, checkWatchlist } from '../services/watchlistService'
+import ReviewsSection from '../components/ReviewsSection'
 
 
-function getPlaceholderReviews(movie) {
-  return [
-    {
-      id: 1,
-      username: 'cinema_scout',
-      rating: Math.min(10, movie.rating && movie.rating !== 'N/A' ? parseFloat(movie.rating) + 0.2 : 9).toFixed(1),
-      text: `${movie.title} is visually stunning and stays with you long after the credits. A must-watch for ${movie.genre ? movie.genre.toLowerCase() : 'movie'} fans.`,
-      date: 'Mar 8, 2024',
-    },
-    {
-      id: 2,
-      username: 'reel_reviewer',
-      rating: movie.rating && movie.rating !== 'N/A' ? movie.rating : '8.5',
-      text: `Loved the direction by ${movie.director}. The cast delivers strong performances throughout.`,
-      date: 'Feb 19, 2024',
-    },
-    {
-      id: 3,
-      username: 'framebyframe',
-      rating: Math.max(6, movie.rating && movie.rating !== 'N/A' ? parseFloat(movie.rating) - 0.5 : 7).toFixed(1),
-      text: `A solid ${movie.genre} pick. Great pacing and an overview that truly pulls you into the story.`,
-      date: 'Jan 30, 2024',
-    },
-  ]
-}
 
 function handleAction() {
   alert('This feature will be available in the next phase.')
@@ -203,7 +179,6 @@ export default function MovieDetails() {
     return <MovieNotFound />
   }
 
-  const reviews = getPlaceholderReviews(movie)
   const similarMovies = getSimilarMovies(movie.id) // Fallback logic for similar movies
 
   // Add subtle backdrop styling if available
@@ -356,7 +331,7 @@ export default function MovieDetails() {
               </div>
             </section>
           )}
-          <ReviewsSection movieId={movie.id} />
+          <ReviewsSection movieId={movie.id} movieTitle={movie.title} moviePoster={movie.poster} />
         </div>
       </main>
       <Footer />

@@ -11,11 +11,13 @@ import {
 const router = express.Router()
 
 // Define movie routes
+// Define movie routes
 router.get('/trending', getTrendingMovies)
 router.get('/popular', getPopularMovies)
 router.get('/search', searchMovies)
-router.get('/:id', getMovieDetails)
+// Specific subroutes must be defined before the generic ':id' route
 router.get('/:id/credits', getMovieCredits)
 router.get('/:id/videos', getMovieVideos)
+router.get('/:id', getMovieDetails)
 
 export default router

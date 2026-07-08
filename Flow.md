@@ -301,3 +301,16 @@ GET http://localhost:5000/api/health
 - Updated `ReviewsSection.jsx` to render review cards, loading/error/empty states, and display average rating and total count.
 - Integrated `<ReviewsSection movieId={movie.id} />` into `MovieDetails.jsx` ensuring no import errors.
 - Applied Cineza’s premium styling (glassmorphism, dark theme, responsive layout) and verified all UI tests pass.
+
+## Phase 6.5B — Stability Audit & Review System Alignment – July 8, 2026
+- **Stability Audit**: Completed a thorough trace across frontend and backend integrations, ensuring full functionality and solving critical bugs.
+- **Review Service Syntax Error**: Restructured `reviewService.js` to fix template literal syntax errors (missing backticks).
+- **React Hook Rules Correction**: Resolved a React hook warning where `useAuth()` was conditionally invoked within `ReviewsSection.jsx`. Moved it to the top level.
+- **MovieDetails Crash Resolution**: Fixed a runtime crash on the Movie Details page by adding the missing import for `ReviewsSection.jsx` and deleting the unused `getPlaceholderReviews` function.
+- **Review System Mappings & Validation**:
+  - Aligned data contracts between front and back ends: mapped frontend fields to use `review` instead of `text` to match backend models.
+  - Added required parameters (`movieTitle`, `moviePoster`) when sending submissions from `ReviewForm.jsx`.
+  - Installed missing `prop-types` package dependency.
+  - Fixed route parameter mapping mismatch (`reviewId` vs `id`) in backend `reviewController.js` for updating and deleting reviews.
+- **ESLint & Build Clean Sweep**: Corrected and verified workspace compilation; `npm run lint` and `npm run build` now compile completely clean with 0 errors and 0 warnings.
+
