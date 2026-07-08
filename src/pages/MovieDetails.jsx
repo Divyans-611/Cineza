@@ -3,17 +3,23 @@ import { Link, useParams, useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import MovieCard from '../components/MovieCard'
-import { getMovieById as getDummyMovieById, getSimilarMovies } from '../data/movies'
+import { movies, getMovieById as getDummyMovieById, getSimilarMovies } from '../data/movies'
 import { getMovieDetails, getMovieCredits, getMovieVideos } from '../services/movieService'
 import { normalizeTMDBDetails } from '../utils/movieUtils'
 import { useAuth } from '../context/AuthContext'
 import { addToWatchlist, removeFromWatchlist, checkWatchlist } from '../services/watchlistService'
 import ReviewsSection from '../components/ReviewsSection'
 
-
-
 function handleAction() {
   alert('This feature will be available in the next phase.')
+}
+
+// Format currency helper
+function formatCurrency(amount) {
+  if (!amount) return null
+  if (amount >= 1_000_000_000) return `$${(amount / 1_000_000_000).toFixed(1)}B`
+  if (amount >= 1_000_000) return `$${(amount / 1_000_000).toFixed(0)}M`
+  return `$${amount.toLocaleString()}`
 }
 
 function MovieNotFound() {
@@ -23,21 +29,82 @@ function MovieNotFound() {
       <main className="page-shell movie-details movie-details--not-found">
         <div className="page-shell__inner movie-details__inner">
           <article className="movie-details__empty empty-state glass-card">
-            <span className="movie-details__empty-icon" aria-hidden="true">
-              🎬
-            </span>
+            <span className="movie-details__empty-icon" aria-hidden="true">🎬</span>
             <h1 className="movie-details__empty-title">Movie Not Found</h1>
             <p className="movie-details__empty-text">
               This movie seems to have missed its release date.
             </p>
-            <Link to="/movies" className="btn btn--primary">
-              Back to Movies
-            </Link>
+            <Link to="/movies" className="btn btn--primary">Back to Movies</Link>
           </article>
         </div>
       </main>
       <Footer />
     </>
+  )
+}
+
+// Loading skeleton
+function MovieDetailsSkeleton() {
+  return (
+    <>
+      <Navbar />
+      <main className="md-page">
+        <div className="md-hero md-hero--skeleton">
+          <div className="md-hero__gradient" />
+          <div className="md-hero__content">
+            <div className="md-hero__poster-slot">
+              <div className="skeleton-pulse md-poster--skeleton" />
+            </div>
+            <div className="md-hero__info">
+              <div className="skeleton-pulse" style={{ height: '14px', width: '120px', borderRadius: '999px', marginBottom: '1rem' }} />
+              <div className="skeleton-pulse" style={{ height: '52px', width: '80%', marginBottom: '0.75rem' }} />
+              <div className="skeleton-pulse" style={{ height: '16px', width: '60%', marginBottom: '1.5rem' }} />
+              <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
+                {[80, 70, 90, 60].map((w, i) => (
+                  <div key={i} className="skeleton-pulse" style={{ height: '28px', width: `${w}px`, borderRadius: '999px' }} />
+                ))}
+              </div>
+              <div className="skeleton-pulse" style={{ height: '16px', width: '100%', marginBottom: '0.5rem' }} />
+              <div className="skeleton-pulse" style={{ height: '16px', width: '90%', marginBottom: '0.5rem' }} />
+              <div className="skeleton-pulse" style={{ height: '16px', width: '75%', marginBottom: '2rem' }} />
+              <div className="skeleton-pulse" style={{ height: '44px', width: '180px', borderRadius: '10px' }} />
+            </div>
+          </div>
+        </div>
+        <div className="md-body">
+          <div className="md-body__inner" />
+        </div>
+      </main>
+      <Footer />
+    </>
+  )
+}
+
+// Cast card sub-component
+function CastCard({ member }) {
+  const [imgFailed, setImgFailed] = useState(false)
+  return (
+    <div className="cast-card">
+      <div className="cast-card__avatar-wrap">
+        {!imgFailed && member.profileImage ? (
+          <img
+            src={member.profileImage}
+            alt={member.name}
+            className="cast-card__avatar"
+            loading="lazy"
+            onError={() => setImgFailed(true)}
+          />
+        ) : (
+          <div className="cast-card__avatar cast-card__avatar--fallback" aria-label={member.name}>
+            <span>👤</span>
+          </div>
+        )}
+      </div>
+      <p className="cast-card__name">{member.name}</p>
+      {member.character && (
+        <p className="cast-card__character">{member.character}</p>
+      )}
+    </div>
   )
 }
 
@@ -78,7 +145,7 @@ export default function MovieDetails() {
     checkStatus()
   }, [isAuthenticated, token, movie])
 
-  // Toggle watchlist logic
+  // Toggle watchlist logic — UNCHANGED
   const handleWatchlistToggle = async () => {
     if (!isAuthenticated) {
       navigate('/login')
@@ -94,7 +161,6 @@ export default function MovieDetails() {
         setIsInWatchlist(false)
         setWatchlistMessage({ type: 'success', text: 'Removed from watchlist' })
       } else {
-        // Format genres
         let formattedGenres = []
         if (Array.isArray(movie.genre)) {
           formattedGenres = movie.genre
@@ -104,8 +170,8 @@ export default function MovieDetails() {
           formattedGenres = movie.genres.map(g => g.name || g)
         }
 
-        const rawRating = movie.vote_average ?? movie.rating;
-        const safeRating = Number(rawRating);
+        const rawRating = movie.vote_average ?? movie.rating
+        const safeRating = Number(rawRating)
 
         const movieData = {
           movieId: movie.id,
@@ -133,20 +199,20 @@ export default function MovieDetails() {
     const fetchDetails = async () => {
       setIsLoading(true)
       setError(null)
-      
+
       try {
         const [details, credits, videos] = await Promise.all([
           getMovieDetails(id),
           getMovieCredits(id),
           getMovieVideos(id)
         ])
-        
+
         const normalized = normalizeTMDBDetails(details, credits, videos)
         setMovie(normalized)
-        
+
       } catch (err) {
-        console.error("API Error, falling back to dummy data:", err)
-        setError("Failed to fetch from backend API. Trying offline data.")
+        console.error('API Error, falling back to dummy data:', err)
+        setError('Showing offline data — connect to backend for full details.')
         const dummy = getDummyMovieById(id)
         if (dummy) {
           setMovie(dummy)
@@ -157,181 +223,302 @@ export default function MovieDetails() {
         setIsLoading(false)
       }
     }
-    
+
     fetchDetails()
   }, [id])
 
-  if (isLoading) {
-    return (
-      <>
-        <Navbar />
-        <main className="page-shell movie-details">
-          <div className="page-shell__inner movie-details__inner" style={{ textAlign: 'center', padding: '4rem 0' }}>
-            <h2 style={{ color: 'var(--color-text)' }}>Loading movie details...</h2>
-          </div>
-        </main>
-        <Footer />
-      </>
+  if (isLoading) return <MovieDetailsSkeleton />
+  if (!movie) return <MovieNotFound />
+
+  let similarMovies = getSimilarMovies(movie.id)
+  if (similarMovies.length === 0) {
+    const currentGenre = movie.genre || (Array.isArray(movie.genres) && movie.genres[0]) || 'Drama'
+    const sameGenre = movies.filter(
+      (m) => m.id !== movie.id && m.genre && m.genre.toLowerCase() === currentGenre.toLowerCase()
     )
+    const others = movies.filter(
+      (m) => m.id !== movie.id && (!m.genre || m.genre.toLowerCase() !== currentGenre.toLowerCase())
+    )
+    similarMovies = [...sameGenre, ...others].slice(0, 4)
   }
 
-  if (!movie) {
-    return <MovieNotFound />
-  }
+  // ── Hero backdrop style
+  const backdropStyle = movie.backdrop
+    ? {
+        backgroundImage: `
+          linear-gradient(to top, #0b0f19 0%, rgba(11,15,25,0.85) 40%, rgba(11,15,25,0.55) 70%, rgba(11,15,25,0.3) 100%),
+          url(${movie.backdrop})
+        `,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center 20%',
+      }
+    : {
+        background: 'linear-gradient(180deg, rgba(21,26,36,0.9) 0%, #0b0f19 100%)',
+      }
 
-  const similarMovies = getSimilarMovies(movie.id) // Fallback logic for similar movies
+  // Genre display — prefer genres array, fallback to genre string
+  const genreList = Array.isArray(movie.genres) && movie.genres.length > 0
+    ? movie.genres
+    : movie.genre ? [movie.genre] : []
 
-  // Add subtle backdrop styling if available
-  const heroStyle = movie.backdrop ? {
-    backgroundImage: `linear-gradient(to right, rgba(21, 26, 36, 1) 20%, rgba(21, 26, 36, 0.7) 100%), url(${movie.backdrop})`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundBlendMode: 'overlay',
-  } : {};
+  // Cast objects — may not exist on dummy data
+  const castObjects = movie.castObjects || []
 
   return (
     <>
       <Navbar />
-      <main className="page-shell movie-details">
-        <div className="page-shell__inner movie-details__inner">
-          <Link to="/movies" className="movie-details__back">
-            ← Back to Movies
-          </Link>
-          
-          {error && (
-            <div style={{ backgroundColor: 'rgba(229, 9, 20, 0.1)', border: '1px solid #e50914', color: '#fff', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem' }}>
-              ⚠️ {error}
-            </div>
-          )}
+      <main className="md-page">
 
-          <section className="movie-details__hero glass-card" style={heroStyle}>
-            <div className="movie-details__poster-wrap">
-              {!posterFailed && movie.poster ? (
-                <img
-                  src={movie.poster}
-                  alt={`${movie.title} poster`}
-                  className="movie-details__poster"
-                  onError={() => setPosterFailed(true)}
-                />
-              ) : (
-                <div className="movie-details__poster-fallback">
-                  <span aria-hidden="true">🎬</span>
-                  <p>{movie.title}</p>
-                  <small>Poster unavailable</small>
-                </div>
+        {/* ═══════════════════════════════════════
+            CINEMATIC HERO BANNER
+        ═══════════════════════════════════════ */}
+        <section className="md-hero" style={backdropStyle} aria-label={`${movie.title} hero banner`}>
+          <div className="md-hero__gradient" aria-hidden="true" />
+          <div className="md-hero__content">
+
+            {/* Poster */}
+            <div className="md-hero__poster-slot">
+              <div className="md-poster">
+                {!posterFailed && movie.poster ? (
+                  <img
+                    src={movie.poster}
+                    alt={`${movie.title} poster`}
+                    className="md-poster__img"
+                    onError={() => setPosterFailed(true)}
+                  />
+                ) : (
+                  <div className="md-poster__fallback">
+                    <span aria-hidden="true">🎬</span>
+                    <p>{movie.title}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Info */}
+            <div className="md-hero__info">
+              {/* Back link */}
+              <Link to="/movies" className="md-back">
+                <span aria-hidden="true">←</span> All Movies
+              </Link>
+
+              {/* Tagline */}
+              {movie.tagline && (
+                <p className="md-hero__tagline">&ldquo;{movie.tagline}&rdquo;</p>
               )}
-            </div>
 
-            <div className="movie-details__info">
-              <h1 className="movie-details__title">{movie.title}</h1>
+              {/* Title */}
+              <h1 className="md-hero__title">{movie.title}</h1>
 
-              <div className="movie-details__badges">
-                <span className="movie-details__badge movie-details__badge--rating">
-                  ★ {movie.rating}
-                </span>
-                <span className="movie-details__badge">{movie.year}</span>
-                <span className="movie-details__badge movie-details__badge--genre">
-                  {movie.genre}
-                </span>
-                <span className="movie-details__badge">{movie.runtime} min</span>
-                <span className="movie-details__badge">{movie.language}</span>
+              {/* Meta row */}
+              <div className="md-hero__meta">
+                {movie.rating && movie.rating !== 'N/A' && (
+                  <span className="md-meta-pill md-meta-pill--rating">★ {movie.rating}</span>
+                )}
+                {movie.year && (
+                  <span className="md-meta-pill">{movie.year}</span>
+                )}
+                {movie.runtime > 0 && (
+                  <span className="md-meta-pill">{movie.runtime} min</span>
+                )}
+                {movie.language && (
+                  <span className="md-meta-pill md-meta-pill--lang">{movie.language}</span>
+                )}
               </div>
 
-              <dl className="movie-details__meta">
-                <div className="movie-details__meta-row">
-                  <dt>Director</dt>
-                  <dd>{movie.director}</dd>
+              {/* Genre badges */}
+              {genreList.length > 0 && (
+                <div className="md-hero__genres">
+                  {genreList.map(g => (
+                    <span key={g} className="md-genre-badge">{g}</span>
+                  ))}
                 </div>
-                <div className="movie-details__meta-row">
-                  <dt>Cast</dt>
-                  <dd>{movie.cast.length > 0 ? movie.cast.join(', ') : 'Unknown'}</dd>
-                </div>
-              </dl>
+              )}
 
-              <p className="movie-details__overview">{movie.overview}</p>
+              {/* Overview */}
+              <p className="md-hero__overview">{movie.overview}</p>
 
-              <div className="movie-details__actions">
-                <div className="movie-details__watchlist-action" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              {/* Director */}
+              {movie.director && movie.director !== 'Unknown' && (
+                <p className="md-hero__director">
+                  <span className="md-hero__director-label">Directed by</span>
+                  {' '}{movie.director}
+                </p>
+              )}
+
+              {/* Watchlist + CTA actions */}
+              <div className="md-hero__actions">
+                <div className="md-watchlist-wrap">
                   {!isAuthenticated ? (
                     <button
                       type="button"
-                      className="btn btn--secondary"
+                      className="btn btn--md-watchlist"
                       onClick={() => navigate('/login')}
                     >
-                      Login to save
+                      <span className="btn-icon">🔒</span> Login to Save
                     </button>
                   ) : (
                     <button
                       type="button"
-                      className={`btn ${isInWatchlist ? 'btn--in-watchlist' : 'btn--primary'}`}
+                      className={`btn ${isInWatchlist ? 'btn--md-watchlist-active' : 'btn--md-watchlist'}`}
                       onClick={handleWatchlistToggle}
                       disabled={watchlistLoading}
                     >
-                      {watchlistLoading ? 'Wait...' : isInWatchlist ? '✓ In Watchlist' : '+ Add to Watchlist'}
+                      {watchlistLoading
+                        ? <span className="btn-icon spinning-loader">⏳</span>
+                        : isInWatchlist
+                          ? <><span className="btn-icon">✓</span> In Watchlist</>
+                          : <><span className="btn-icon">＋</span> Watchlist</>
+                      }
                     </button>
                   )}
                   {watchlistMessage && (
-                    <span className={`watchlist-message watchlist-message--${watchlistMessage.type}`}>
+                    <span className={`md-watchlist-msg md-watchlist-msg--${watchlistMessage.type}`}>
                       {watchlistMessage.text}
                     </span>
                   )}
                 </div>
-                <button
-                  type="button"
-                  className="btn btn--secondary"
-                  onClick={handleAction}
-                >
-                  Write Review
+
+                <button type="button" className="btn btn--md-secondary" onClick={handleAction}>
+                  ✎ Write Review
                 </button>
-                <button
-                  type="button"
-                  className="btn btn--secondary"
-                  onClick={handleAction}
-                >
-                  Get AI Pick
+                <button type="button" className="btn btn--md-secondary" onClick={handleAction}>
+                  🤖 AI Pick
                 </button>
               </div>
+
+              {/* Offline error banner */}
+              {error && (
+                <div className="md-offline-banner">
+                  ⚠️ {error}
+                </div>
+              )}
             </div>
-          </section>
+          </div>
+        </section>
 
-          <section className="movie-details__section">
-            <h2 className="movie-details__section-title">Trailer Preview</h2>
-            {movie.trailerKey ? (
-              <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: '16px', border: '1px solid var(--color-border)' }}>
-                <iframe 
-                  src={`https://www.youtube.com/embed/${movie.trailerKey}`} 
-                  title="YouTube video player" 
-                  frameBorder="0" 
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                  allowFullScreen
-                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-                ></iframe>
-              </div>
-            ) : (
-              <div className="movie-details__trailer glass-card">
-                <span className="movie-details__trailer-play" aria-hidden="true">
-                  ▶
-                </span>
-                <p className="movie-details__trailer-text">
-                  Trailer is not available for this movie yet.
-                </p>
-              </div>
+        {/* ═══════════════════════════════════════
+            BODY CONTENT
+        ═══════════════════════════════════════ */}
+        <div className="md-body">
+          <div className="md-body__inner">
+
+            {/* ─── Movie Info Grid ─── */}
+            {(movie.budget || movie.revenue || movie.status || movie.language) && (
+              <section className="md-section" aria-label="Movie details">
+                <h2 className="md-section__title">
+                  <span className="md-section__accent" aria-hidden="true" />
+                  Movie Details
+                </h2>
+                <div className="md-info-grid">
+                  {movie.status && (
+                    <div className="md-info-item">
+                      <dt className="md-info-item__label">Status</dt>
+                      <dd className="md-info-item__value">
+                        <span className={`md-status-badge md-status-badge--${movie.status.toLowerCase().replace(/\s/g, '-')}`}>
+                          {movie.status}
+                        </span>
+                      </dd>
+                    </div>
+                  )}
+                  {movie.language && (
+                    <div className="md-info-item">
+                      <dt className="md-info-item__label">Original Language</dt>
+                      <dd className="md-info-item__value">{movie.language}</dd>
+                    </div>
+                  )}
+                  {movie.budget && (
+                    <div className="md-info-item">
+                      <dt className="md-info-item__label">Budget</dt>
+                      <dd className="md-info-item__value">{formatCurrency(movie.budget)}</dd>
+                    </div>
+                  )}
+                  {movie.revenue && (
+                    <div className="md-info-item">
+                      <dt className="md-info-item__label">Box Office</dt>
+                      <dd className="md-info-item__value">{formatCurrency(movie.revenue)}</dd>
+                    </div>
+                  )}
+                </div>
+              </section>
             )}
-          </section>
 
+            {/* ─── Cast Section ─── */}
+            {castObjects.length > 0 && (
+              <section className="md-section" aria-label="Cast">
+                <h2 className="md-section__title">
+                  <span className="md-section__accent" aria-hidden="true" />
+                  Cast
+                </h2>
+                <div className="md-cast-shelf-wrap">
+                  <div className="md-cast-shelf">
+                    {castObjects.map(member => (
+                      <CastCard key={member.id} member={member} />
+                    ))}
+                  </div>
+                </div>
+              </section>
+            )}
 
-
-          {similarMovies.length > 0 && (
-            <section className="movie-details__section">
-              <h2 className="movie-details__section-title">Similar Movies</h2>
-              <div className="movie-details__similar">
-                {similarMovies.map((similar) => (
-                  <MovieCard key={similar.id} movie={similar} />
-                ))}
-              </div>
+            {/* ─── Trailer Section ─── */}
+            <section className="md-section" aria-label="Trailer">
+              <h2 className="md-section__title">
+                <span className="md-section__accent" aria-hidden="true" />
+                Trailer
+              </h2>
+              {movie.trailerKey ? (
+                <div className="md-trailer-wrap">
+                  <iframe
+                    src={`https://www.youtube.com/embed/${movie.trailerKey}?rel=0&modestbranding=1`}
+                    title={`${movie.title} trailer`}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="md-trailer-iframe"
+                  />
+                </div>
+              ) : (
+                <div className="md-trailer-empty glass-card">
+                  <div className="md-trailer-empty__icon" aria-hidden="true">▶</div>
+                  <p className="md-trailer-empty__text">No trailer available yet.</p>
+                  <p className="md-trailer-empty__note">Check back later — trailers drop closer to release.</p>
+                </div>
+              )}
             </section>
-          )}
-          <ReviewsSection movieId={movie.id} movieTitle={movie.title} moviePoster={movie.poster} />
+
+            {/* ─── Similar Movies ─── */}
+            {similarMovies.length > 0 && (
+              <section className="md-section" aria-label="Similar movies">
+                <h2 className="md-section__title">
+                  <span className="md-section__accent" aria-hidden="true" />
+                  You May Also Like
+                </h2>
+                <div className="movie-section__shelf-wrap">
+                  <div className="movie-section__shelf">
+                    {similarMovies.map(similar => (
+                      <div key={similar.id} className="movie-section__item">
+                        <MovieCard movie={similar} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </section>
+            )}
+
+            {/* ─── Reviews Section ─── */}
+            <section className="md-section md-section--reviews" aria-label="Community reviews">
+              <h2 className="md-section__title">
+                <span className="md-section__accent" aria-hidden="true" />
+                Community Reviews
+              </h2>
+              <ReviewsSection
+                movieId={movie.id}
+                movieTitle={movie.title}
+                moviePoster={movie.poster}
+              />
+            </section>
+
+          </div>
         </div>
       </main>
       <Footer />
