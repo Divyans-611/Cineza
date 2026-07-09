@@ -12,6 +12,22 @@ export default function GlobalSearch({ isOpen, onClose }) {
   const navigate = useNavigate();
   const inputRef = useRef(null);
 
+  // Global keyboard shortcut: Cmd+K / Ctrl+K to open
+  useEffect(() => {
+    const handleGlobalKey = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        if (!isOpen) {
+          // Trigger parent's open — but since we don't have the setter,
+          // we simulate by dispatching a custom event
+          window.dispatchEvent(new CustomEvent('cineza:open-search'));
+        }
+      }
+    };
+    window.addEventListener('keydown', handleGlobalKey);
+    return () => window.removeEventListener('keydown', handleGlobalKey);
+  }, [isOpen]);
+
   // Focus input when opened
   useEffect(() => {
     if (isOpen) {
@@ -57,7 +73,7 @@ export default function GlobalSearch({ isOpen, onClose }) {
         }
       } catch (err) {
         console.error("Global search error:", err);
-        setError("Couldn’t reach Cineza search right now.");
+        setError("Couldn't reach Cineza search right now.");
       } finally {
         setIsLoading(false);
       }
@@ -82,7 +98,10 @@ export default function GlobalSearch({ isOpen, onClose }) {
       <div className="search-modal" onClick={e => e.stopPropagation()}>
         <header className="search-modal-header">
           <div className="search-input-wrap">
-            <span className="search-input-icon">🔍</span>
+            <svg className="search-input-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
             <input
               ref={inputRef}
               className="search-input"
@@ -90,19 +109,28 @@ export default function GlobalSearch({ isOpen, onClose }) {
               placeholder="Search movies, directors, moods..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              aria-label="Search movies"
             />
             {query && (
-              <button className="search-clear-btn" onClick={() => setQuery('')}>
-                ✕
+              <button className="search-clear-btn" onClick={() => setQuery('')} aria-label="Clear search">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
               </button>
             )}
+            <kbd className="search-esc-hint">ESC</kbd>
           </div>
         </header>
 
         <div className="search-results">
           {query.trim().length < 2 && !isLoading && (
-            <div className="search-state">
-              <p>Search for a movie, mood, or title to begin.</p>
+            <div className="search-state search-state--idle">
+              <svg className="search-state-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <p className="search-state-text">Search for a movie, mood, or title to begin.</p>
               <div className="search-chips">
                 <button className="search-chip" onClick={() => handleChipClick('Interstellar')}>Interstellar</button>
                 <button className="search-chip" onClick={() => handleChipClick('Parasite')}>Parasite</button>
@@ -113,29 +141,43 @@ export default function GlobalSearch({ isOpen, onClose }) {
           )}
 
           {isLoading && (
-            <div className="search-state">
-              <p>Searching the reel...</p>
+            <div className="search-state search-state--loading">
+              <div className="search-spinner" aria-label="Searching">
+                <div className="search-spinner__ring" />
+              </div>
+              <p className="search-state-text">Searching the reel...</p>
             </div>
           )}
 
           {error && (
             <div className="search-state search-state--error">
-              <p>{error}</p>
+              <svg className="search-state-icon search-state-icon--error" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="15" y1="9" x2="9" y2="15" />
+                <line x1="9" y1="9" x2="15" y2="15" />
+              </svg>
+              <p className="search-state-text">{error}</p>
             </div>
           )}
 
           {!isLoading && !error && query.trim().length >= 2 && results.length === 0 && (
-            <div className="search-state">
-              <p>No movies found. Try another title.</p>
+            <div className="search-state search-state--empty">
+              <svg className="search-state-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+              </svg>
+              <p className="search-state-text">No movies found for &ldquo;{query.trim()}&rdquo;</p>
+              <p className="search-state-hint">Try a different title or keyword.</p>
             </div>
           )}
 
           {!isLoading && !error && results.length > 0 && (
             <div className="search-results-list">
               {results.map(movie => (
-                <div key={movie.id} className="search-result-card" onClick={() => handleSelect(movie.id)}>
+                <div key={movie.id} className="search-result-card" onClick={() => handleSelect(movie.id)} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter') handleSelect(movie.id); }}>
                   {movie.poster ? (
-                    <img src={movie.poster} alt={movie.title} className="search-result-poster" />
+                    <img src={movie.poster} alt={movie.title} className="search-result-poster" loading="lazy" />
                   ) : (
                     <div className="search-result-poster search-result-poster--fallback">
                       🎬
