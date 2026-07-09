@@ -72,81 +72,6 @@ GET http://localhost:5000/api/health
 - Project development transferred from Cursor to Antigravity due to AI limit exhaustion.
 - Analyzed existing Phase 1 to Phase 3.1 structure and generated project understanding report.
 - Prepared workspace for Phase 3.2.
-# Cineza — Development Flow
-
-## May 15, 2026
-
-### Landing page — Phase 1 (V1)
-- Cleaned the default Vite starter and built the Cineza landing page inside `src/`.
-- Added components: Navbar, Hero, MovieCard, FeaturedMovies, AIPicksPreview, GamificationPreview, Footer.
-- Added dummy movie data in `src/data/movies.js` (6 movies).
-- Styled everything in `src/styles/global.css` with a dark cinematic theme (Netflix / Letterboxd / IMDb inspired).
-- **Git:** `Created Landing page v1`
-
-### Landing page — Premium upgrade (V1.01)
-- Polished UI: glassmorphism navbar, hero gradients, movie card hover lift, glowing AI Picks card, badge hover accents.
-- Added **CinezaDock** — macOS-style dock with Movies, Reviews, AI Picks, Badges, Watchlist, Profile.
-- Mobile-friendly navbar and horizontally scrollable dock on small screens.
-- Updated hero headline to: *"Cinema is how we dream with our eyes open"*
-- **Git:** `Cineza Landing page V1.01`
-
-## May 17, 2026
-
-### Routing — Phase 2.1
-- Added `react-router-dom` and set up routes in `App.jsx` (Home, Movies, MovieDetails, AI Picks, Watchlist, Reviews, Profile, Login, 404).
-- Created placeholder pages in `src/pages/` with dark themed card layout.
-- Updated **Navbar** (`Link` / `NavLink` + active styling) and **CinezaDock** (clickable dock links).
-- Reusable `PlaceholderPage` component for shared page layout.
-- **Git:** `Phase 2.1 Initialised`
-
-### Movies discovery — Phase 2.2 · 10:08 AM
-- Expanded `src/data/movies.js` to 12 movies (overview, runtime, director, cast, language).
-- Built `/movies` page: live search (title, genre, director, cast), genre filter chips, movie grid, empty state.
-- Updated **MovieCard** — clickable cards linking to `/movies/:id`, hover “View Details” overlay.
-- Home featured section still shows 6 movies only.
-
-### Movies polish — Phase 2.2.1 · 10:40 AM
-- Fixed broken posters: reliable Wikimedia URLs + fallback UI on image error (🎬, title, “Poster unavailable”).
-- Premium **MovieCard**: fixed poster height, gradient overlay, hover lift/glow/zoom, rating in body.
-- Polished `/movies` toolbar, filter chips, grid spacing, and empty state (“Reset Filters”).
-- **Git:** `Phase 2.2.1 done`
-
-### Movie details — Phase 2.3 · 11:33 AM
-- Built full `/movies/:id` page: poster + info layout, director, cast, overview, action buttons (placeholder alerts).
-- Trailer Preview placeholder, 3 static Community Reviews cards, Similar Movies grid (4 cards).
-- `getMovieById()` & `getSimilarMovies()` helpers; “Movie Not Found” state with Back to Movies.
-- **Git:** `Phase 2.3 done`
-
-### Frontend UX polish — Phase 2.4 · 11:42 AM
-- Global utilities: `.page-shell`, `.glass-card`, `.section-header`, `.empty-state`, coming-soon layouts.
-- Polished Navbar, Movies page (count + Reset Filters), Movie Details, Cineza Dock, Footer.
-- Coming-soon pages for AI Picks, Watchlist, Reviews, Profile, Login + improved 404.
-- **Git:** `Phase 2 completed ig`
-
-**Phase 2 complete** — routing, movies browse, movie details, and frontend polish (dummy data only).
-
-## Phase 3 — Backend Foundation Started -> 19-05-2026 -> 02:16 AM
-
-In this phase, we started moving Cineza from a static frontend prototype toward a full-stack application.
-
-### Completed in Phase 3.1
-- Created a separate `backend/` folder inside the existing Cineza project.
-- Set up a basic Node.js + Express backend.
-- Added CORS, dotenv, JSON body parsing, and basic error handling.
-- Created a health check route at `/api/health`.
-- Verified that the backend runs successfully on port `5000`.
-- Confirmed that the frontend and backend can now run separately during development.
-
-### Current Backend Test Route
-```txt
-GET http://localhost:5000/api/health
-```
-
-### Transition to Antigravity
-- Project development transferred from Cursor to Antigravity due to AI limit exhaustion.
-- Analyzed existing Phase 1 to Phase 3.1 structure and generated project understanding report.
-- Prepared workspace for Phase 3.2.
-
 ### TMDB API Integration — Phase 3.2
 - Created `movieService.js` on frontend for API calls.
 - Built backend controllers, routes, and `tmdb.js` utility using native fetch.
@@ -314,3 +239,53 @@ GET http://localhost:5000/api/health
   - Fixed route parameter mapping mismatch (`reviewId` vs `id`) in backend `reviewController.js` for updating and deleting reviews.
 - **ESLint & Build Clean Sweep**: Corrected and verified workspace compilation; `npm run lint` and `npm run build` now compile completely clean with 0 errors and 0 warnings.
 
+## Phase 7.2 — Movie Details Cinematic Overhaul – July 8, 2026
+
+- **Cinematic Hero Section**: Rebuilt `MovieDetails.jsx` with a full-bleed backdrop image hero. Features a dynamic gradient overlay, glowing backdrop blur, and a dual-column layout (poster + metadata) inspired by Netflix and Apple TV+.
+- **Movie Metadata & Info Grid**: Added a structured 4-column info grid displaying Runtime, Release Year, Language, and Budget. Data is cleanly normalized via `movieUtils.js` with safe fallbacks for missing TMDB fields.
+- **Cast Shelf**: Implemented a horizontally scrollable cast shelf (`md-cast-shelf`) showing actor avatar images, names, and character roles. Gracefully handles missing profile photos with initials fallback cards.
+- **Trailer Embed**: Embedded YouTube iframe trailer via TMDB video API. Falls back to a styled "No trailer available" placeholder without breaking the layout.
+- **Similar Movies Section**: Dynamically fetches similar movies from TMDB. Falls back to static dummy data from `movies.js` when the API returns no results.
+- **Community Reviews**: Integrated `ReviewsSection.jsx` directly into the movie detail page showing real user review cards, average star rating, and an inline `ReviewForm.jsx` for authenticated users.
+- **Responsive Design**: Full mobile-first media queries added at 480px, 768px, and 1024px breakpoints.
+- **Git:** `ph 7.2 movie details cinematic overhaul`
+
+## Phase 7.3 — Premium Frontend Polish – July 9, 2026
+
+Polish pass on navigation, search, profile, footer and overall mobile responsiveness to make the app feel like a real startup product.
+
+### Navbar Upgrade
+- Replaced old pill-chip mobile navigation row with a proper **hamburger icon** that slides open a full-width drawer menu.
+- Added **sticky glassmorphic bar** with `backdrop-filter: blur(14px)` and subtle border-bottom shadow.
+- Implemented a **profile avatar dropdown** for authenticated users — shows name, email, avatar (or initials fallback), links to Watchlist and Profile, and a styled logout button.
+- Active link state now shows a gold underline indicator.
+- Smooth CSS animations on dropdown open/close (`dropdownFadeIn`) and hamburger → X morph transition.
+
+### Global Search Experience
+- Added `⌘K` / `Ctrl+K` keyboard shortcut to open the search modal from anywhere in the app.
+- Replaced all emoji-based icons with clean **inline SVG** icons throughout the modal.
+- Added a **CSS loading spinner** that appears while debounced TMDB search is in-flight.
+- Polished idle, empty, and error states with descriptive SVG icons and helper text.
+- ESC key listener closes the modal cleanly.
+
+### Profile Page Refactor
+- Removed all **inline styles** from `Profile.jsx` and migrated them into semantic CSS classes in `global.css`.
+- Level Progression card now shows a live XP progress bar (width computed from `xp / (level * 100)`).
+- Badge grid, genre chips, watchlist count sync, and logout button all styled consistently.
+- Avatar fallback uses golden initials circle with gradient background.
+
+### Footer Upgrade
+- Reorganized into three-column grid (brand + tagline, Navigate links, Connect social links) on desktop.
+- Added **GitHub** and **Twitter** social icon links with hover glow effects.
+- Animated `❤️` heartbeat on the "Made with love" credit line.
+
+### CSS Architecture & Responsiveness
+- Appended a dedicated **Phase 7.3 CSS block** (~1,100 lines) at the end of `global.css` covering: navbar dropdown, mobile drawer, search modal, profile layout, footer upgrade, accessibility focus rings, skip-to-content link, and reduced-motion media query.
+- Mobile-specific overrides at `480px` hide the user name and shortcut key hints in the navbar to maximize space.
+- `overflow-x: hidden` applied globally to prevent horizontal scroll on small screens.
+
+### Verification
+- `npm run lint` → **0 errors, 0 warnings**
+- `npm run build` → **✓ built in 387ms**, 66 modules transformed, zero warnings
+- End-to-end browser test: registered a new user, verified profile page layout, opened mobile drawer, navigated to AI Picks — all passed.
+- **Git:** `ph 7.3 nav+profile+mobile responsive`
