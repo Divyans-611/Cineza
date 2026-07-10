@@ -6,7 +6,7 @@ import { getDirectorsCutRecommendations } from '../utils/recommendationEngine';
 import MovieSkeleton from './MovieSkeleton';
 
 export default function DirectorsCut() {
-  const { user, isAuthenticated, token } = useAuth();
+  const { isAuthenticated, token } = useAuth();
   const navigate = useNavigate();
   const [recommendations, setRecommendations] = useState([]);
   const [isLoading, setIsLoading] = useState(true);

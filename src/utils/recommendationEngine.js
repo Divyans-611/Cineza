@@ -149,7 +149,7 @@ export async function getDirectorsCutRecommendations(watchlist) {
     return _cache.data;
   }
 
-  let recommendations = [];
+  let recommendations;
 
   if (hasWatchlist) {
     recommendations = await getPersonalizedRecs(watchlist);
