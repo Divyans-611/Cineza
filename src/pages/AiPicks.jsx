@@ -1,9 +1,10 @@
 import PlaceholderPage from '../components/PlaceholderPage'
+import { Sparkles } from 'lucide-react'
 
 export default function AiPicks() {
   return (
     <PlaceholderPage
-      icon="🤖"
+      icon={<Sparkles size={48} color="var(--color-primary)" />}
       title="AI Picks"
       subtitle="Tell Cineza your mood and let AI suggest movies that fit your vibe."
       showTagline

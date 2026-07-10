@@ -1,5 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { Loader2 } from 'lucide-react';
 
 /**
  * Route guard for routes that require an authenticated user session.
@@ -23,7 +24,7 @@ export default function ProtectedRoute({ children }) {
           gap: '1rem'
         }}
       >
-        <span className="spinning-loader" style={{ fontSize: '3.5rem', animation: 'spin 2s linear infinite' }}>⏳</span>
+        <Loader2 className="spinning-loader" style={{ animation: 'spin 1.5s linear infinite' }} size={48} />
         <p style={{ color: 'var(--color-muted)', fontSize: '0.95rem', fontWeight: '500', letterSpacing: '0.02em' }}>
           Loading your Cineza profile...
         </p>

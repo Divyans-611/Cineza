@@ -9,6 +9,7 @@ import { normalizeTMDBDetails } from '../utils/movieUtils'
 import { useAuth } from '../context/AuthContext'
 import { addToWatchlist, removeFromWatchlist, checkWatchlist } from '../services/watchlistService'
 import ReviewsSection from '../components/ReviewsSection'
+import { Clapperboard, User, ArrowLeft, Star, Lock, Loader2, Check, Plus, PenBox, Sparkles, AlertTriangle, PlayCircle } from 'lucide-react'
 
 function handleAction() {
   alert('This feature will be available in the next phase.')
@@ -29,7 +30,7 @@ function MovieNotFound() {
       <main className="page-shell movie-details movie-details--not-found">
         <div className="page-shell__inner movie-details__inner">
           <article className="movie-details__empty empty-state glass-card">
-            <span className="movie-details__empty-icon" aria-hidden="true">🎬</span>
+            <Clapperboard className="movie-details__empty-icon" size={48} opacity={0.5} />
             <h1 className="movie-details__empty-title">Movie Not Found</h1>
             <p className="movie-details__empty-text">
               This movie seems to have missed its release date.
@@ -96,7 +97,7 @@ function CastCard({ member }) {
           />
         ) : (
           <div className="cast-card__avatar cast-card__avatar--fallback" aria-label={member.name}>
-            <span>👤</span>
+            <User size={32} opacity={0.5} />
           </div>
         )}
       </div>
@@ -288,7 +289,7 @@ export default function MovieDetails() {
                   />
                 ) : (
                   <div className="md-poster__fallback">
-                    <span aria-hidden="true">🎬</span>
+                    <Clapperboard size={48} opacity={0.5} />
                     <p>{movie.title}</p>
                   </div>
                 )}
@@ -298,8 +299,8 @@ export default function MovieDetails() {
             {/* Info */}
             <div className="md-hero__info">
               {/* Back link */}
-              <Link to="/movies" className="md-back">
-                <span aria-hidden="true">←</span> All Movies
+              <Link to="/movies" className="md-back" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <ArrowLeft size={16} /> All Movies
               </Link>
 
               {/* Tagline */}
@@ -313,7 +314,9 @@ export default function MovieDetails() {
               {/* Meta row */}
               <div className="md-hero__meta">
                 {movie.rating && movie.rating !== 'N/A' && (
-                  <span className="md-meta-pill md-meta-pill--rating">★ {movie.rating}</span>
+                  <span className="md-meta-pill md-meta-pill--rating" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                    <Star size={14} fill="currentColor" /> {movie.rating}
+                  </span>
                 )}
                 {movie.year && (
                   <span className="md-meta-pill">{movie.year}</span>
@@ -355,7 +358,7 @@ export default function MovieDetails() {
                       className="btn btn--md-watchlist"
                       onClick={() => navigate('/login')}
                     >
-                      <span className="btn-icon">🔒</span> Login to Save
+                      <Lock size={16} /> Login to Save
                     </button>
                   ) : (
                     <button
@@ -365,10 +368,10 @@ export default function MovieDetails() {
                       disabled={watchlistLoading}
                     >
                       {watchlistLoading
-                        ? <span className="btn-icon spinning-loader">⏳</span>
+                        ? <Loader2 size={16} className="spinning-loader" />
                         : isInWatchlist
-                          ? <><span className="btn-icon">✓</span> In Watchlist</>
-                          : <><span className="btn-icon">＋</span> Watchlist</>
+                          ? <><Check size={16} /> In Watchlist</>
+                          : <><Plus size={16} /> Watchlist</>
                       }
                     </button>
                   )}
@@ -380,17 +383,17 @@ export default function MovieDetails() {
                 </div>
 
                 <button type="button" className="btn btn--md-secondary" onClick={handleAction}>
-                  ✎ Write Review
+                  <PenBox size={16} /> Write Review
                 </button>
                 <button type="button" className="btn btn--md-secondary" onClick={handleAction}>
-                  🤖 AI Pick
+                  <Sparkles size={16} /> AI Pick
                 </button>
               </div>
 
               {/* Offline error banner */}
               {error && (
-                <div className="md-offline-banner">
-                  ⚠️ {error}
+                <div className="md-offline-banner" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <AlertTriangle size={16} /> {error}
                 </div>
               )}
             </div>
@@ -479,7 +482,7 @@ export default function MovieDetails() {
                 </div>
               ) : (
                 <div className="md-trailer-empty glass-card">
-                  <div className="md-trailer-empty__icon" aria-hidden="true">▶</div>
+                  <PlayCircle size={48} opacity={0.5} className="md-trailer-empty__icon" />
                   <p className="md-trailer-empty__text">No trailer available yet.</p>
                   <p className="md-trailer-empty__note">Check back later — trailers drop closer to release.</p>
                 </div>

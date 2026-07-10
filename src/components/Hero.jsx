@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { getTrendingMovies } from '../services/movieService'
 import { normalizeTMDBMovie } from '../utils/movieUtils'
 import { movies as dummyMovies } from '../data/movies'
+import { Star, Film, Sparkles } from 'lucide-react'
 
 export default function Hero() {
   const [movie, setMovie] = useState(null)
@@ -79,7 +80,7 @@ export default function Hero() {
         <div className="hero__badge-container">
           <span className="hero__eyebrow-badge">Trending Weekly</span>
           {activeMovie.rating && activeMovie.rating !== 'N/A' && (
-            <span className="hero__rating-badge">★ {activeMovie.rating}</span>
+            <span className="hero__rating-badge" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Star size={14} fill="currentColor" /> {activeMovie.rating}</span>
           )}
         </div>
 
@@ -106,7 +107,7 @@ export default function Hero() {
         <div className="hero__actions hero__actions--cinematic">
           {activeMovie.id !== 'explore' ? (
             <Link to={`/movies/${activeMovie.id}`} className="btn btn--primary btn--hero-play">
-              <span className="btn-icon">🎬</span> View Details
+              <Film size={18} className="btn-icon" /> View Details
             </Link>
           ) : (
             <Link to="/movies" className="btn btn--primary btn--hero-play">
@@ -114,7 +115,7 @@ export default function Hero() {
             </Link>
           )}
           <Link to="/ai-picks" className="btn btn--secondary btn--hero-info">
-            <span className="btn-icon">🤖</span> Try AI Picks
+            <Sparkles size={18} className="btn-icon" /> Try AI Picks
           </Link>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { Loader2, AlertTriangle } from 'lucide-react';
 
 export default function AuthSuccess() {
   const { handleAuthSuccess } = useAuth();
@@ -38,30 +39,13 @@ export default function AuthSuccess() {
   }, [location, handleAuthSuccess, navigate]);
 
   return (
-    <div 
-      style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        minHeight: '100vh', 
-        background: '#040714',
-        color: '#fff',
-        fontFamily: 'system-ui, -apple-system, sans-serif'
-      }}
-    >
-      <div 
-        className="glass-card" 
-        style={{ 
-          padding: '3rem', 
-          maxWidth: '440px', 
-          width: '90%', 
-          textAlign: 'center',
-          boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)'
-        }}
-      >
+    <div className="auth-success-container">
+      <div className="glass-card auth-success-card">
         {errorMsg ? (
           <div>
-            <span style={{ fontSize: '3.5rem', display: 'block', marginBottom: '1rem' }} aria-hidden="true">⚠️</span>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.25rem' }}>
+              <AlertTriangle size={56} color="var(--color-primary)" />
+            </div>
             <h1 style={{ color: 'var(--color-primary)', fontSize: '1.5rem', fontWeight: '800', marginBottom: '0.75rem' }}>
               Authentication Failed
             </h1>
@@ -78,7 +62,9 @@ export default function AuthSuccess() {
           </div>
         ) : (
           <div>
-            <span className="spinning-loader" style={{ fontSize: '4rem', display: 'block', marginBottom: '1.25rem', animation: 'spin 2.5s linear infinite' }} aria-hidden="true">⏳</span>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+              <Loader2 className="spinning-loader" style={{ animation: 'spin 1.5s linear infinite' }} size={64} color="var(--color-gold)" />
+            </div>
             <h1 style={{ fontSize: '1.6rem', fontWeight: '800', marginBottom: '0.5rem', letterSpacing: '-0.02em', color: 'var(--color-gold)' }}>
               Completing Sign In
             </h1>

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { Film, X, Star } from 'lucide-react'
 
 export default function WatchlistCard({ movie, onRemove }) {
   const handleRemove = (e) => {
@@ -31,9 +32,7 @@ export default function WatchlistCard({ movie, onRemove }) {
           />
         ) : (
           <div className="watchlist-card__fallback">
-            <span className="watchlist-card__fallback-icon" aria-hidden="true">
-              🎬
-            </span>
+            <Film size={32} opacity={0.5} className="watchlist-card__fallback-icon" />
             <p className="watchlist-card__fallback-title">{movie.title}</p>
             <small className="watchlist-card__fallback-text">No Poster</small>
           </div>
@@ -45,11 +44,11 @@ export default function WatchlistCard({ movie, onRemove }) {
             onClick={handleRemove}
             title="Remove from Watchlist"
           >
-            ✕ Remove
+            <X size={14} style={{ marginRight: '0.25rem' }} /> Remove
           </button>
         </div>
-        <div className="watchlist-card__rating">
-          ★ {movie.rating > 0 ? movie.rating.toFixed(1) : 'NR'}
+        <div className="watchlist-card__rating" style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+          <Star size={12} fill="currentColor" color="var(--color-gold)" /> {movie.rating > 0 ? movie.rating.toFixed(1) : 'NR'}
         </div>
       </div>
       

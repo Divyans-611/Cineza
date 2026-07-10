@@ -4,6 +4,7 @@ import * as reviewService from '../services/reviewService';
 import ReviewCard from './ReviewCard';
 import ReviewForm from './ReviewForm';
 import { useAuth } from '../context/AuthContext';
+import { Star } from 'lucide-react';
 
 export default function ReviewsSection({ movieId, movieTitle, moviePoster }) {
   const [reviews, setReviews] = useState([]);
@@ -63,7 +64,7 @@ export default function ReviewsSection({ movieId, movieTitle, moviePoster }) {
     <section className="reviews-section glass-card">
       <h2 className="reviews-section__title">Community Reviews</h2>
       <div className="reviews-stats">
-        <span className="reviews-stats__average">Average Rating: {avgRating.toFixed(1)} ★</span>
+        <span className="reviews-stats__average" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>Average Rating: {avgRating.toFixed(1)} <Star size={14} fill="currentColor" color="var(--color-gold)" /></span>
         <span className="reviews-stats__count">{reviews.length} review{reviews.length !== 1 ? 's' : ''}</span>
       </div>
       <div className="reviews-list">

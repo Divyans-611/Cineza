@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
+import { Clapperboard } from 'lucide-react'
 
 export default function NotFound() {
   return (
@@ -9,10 +10,8 @@ export default function NotFound() {
       <main className="page-shell">
         <div className="page-shell__inner">
           <article className="empty-state glass-card">
-            <span className="empty-state__icon" aria-hidden="true">
-              🎬
-            </span>
-            <h1 className="empty-state__title">404 — Scene Not Found</h1>
+            <Clapperboard size={48} opacity={0.5} className="empty-state__icon" />
+            <h1 className="empty-state__title">404 - Lost in Space</h1>
             <p className="empty-state__text">
               This page seems to have missed its release date.
             </p>

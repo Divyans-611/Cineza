@@ -1,6 +1,6 @@
-
 import MovieCard from './MovieCard'
 import MovieSkeleton from './MovieSkeleton'
+import { Film } from 'lucide-react'
 
 export default function MovieSection({ title, subtitle, movies, isLoading, isError, emptyMessage }) {
   if (isError && (!movies || movies.length === 0)) {
@@ -32,7 +32,7 @@ export default function MovieSection({ title, subtitle, movies, isLoading, isErr
           </div>
         ) : !movies || movies.length === 0 ? (
           <div className="movie-section__empty glass-card">
-            <span className="movie-section__empty-icon" aria-hidden="true">🎬</span>
+            <Film size={48} opacity={0.5} className="movie-section__empty-icon" />
             <h3 className="movie-section__empty-title">No Movies Available</h3>
             <p className="movie-section__empty-text">{emptyMessage || 'Check back later for fresh updates.'}</p>
           </div>

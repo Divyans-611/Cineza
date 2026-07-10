@@ -1,5 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { Loader2 } from 'lucide-react';
 
 /**
  * Route guard that prevents logged-in users from accessing authentication pages (e.g. Login, Signup).
@@ -19,7 +20,7 @@ export default function PublicOnlyRoute({ children }) {
           color: 'var(--color-gold)'
         }}
       >
-        <span className="spinning-loader" style={{ fontSize: '3rem', animation: 'spin 2s linear infinite' }}>⏳</span>
+        <Loader2 className="spinning-loader" style={{ animation: 'spin 1.5s linear infinite' }} size={48} />
       </div>
     );
   }

@@ -1,6 +1,7 @@
 // src/components/MovieCard.jsx
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Film, Star } from 'lucide-react'
 
 export default function MovieCard({ movie }) {
   const [posterFailed, setPosterFailed] = useState(false)
@@ -21,14 +22,16 @@ export default function MovieCard({ movie }) {
           </>
         ) : (
           <div className="movie-card-v2__fallback" aria-label={`${movie.title} poster unavailable`}>
-            <span className="movie-card-v2__fallback-icon" aria-hidden="true">🎬</span>
+            <Film className="movie-card-v2__fallback-icon" size={32} opacity={0.5} />
             <p className="movie-card-v2__fallback-title">{movie.title}</p>
             <p className="movie-card-v2__fallback-text">Poster unavailable</p>
           </div>
         )}
 
         {movie.rating && movie.rating !== 'N/A' && (
-          <span className="movie-card-v2__rating-badge">★ {movie.rating}</span>
+          <span className="movie-card-v2__rating-badge">
+            <Star size={12} fill="currentColor" /> {movie.rating}
+          </span>
         )}
 
         <div className="movie-card-v2__overlay">

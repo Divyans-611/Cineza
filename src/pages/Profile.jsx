@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useState, useEffect } from 'react';
 import { getWatchlist } from '../services/watchlistService';
+import { Award, Medal, Star, Film, FolderHeart, PenBox } from 'lucide-react';
 
 
 export default function Profile() {
@@ -100,8 +101,8 @@ export default function Profile() {
               {/* Level progression card */}
               <div className="glass-card profile-card">
                 <div>
-                  <h3 className="profile-card__title">
-                    <span>🏆</span> Level Progression
+                  <h3 className="profile-card__title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <Award size={20} className="profile-card__icon" color="var(--color-gold)" /> Level Progression
                   </h3>
                   <div className="profile-card__xp-row">
                     <span>XP: {xp}</span>
@@ -120,13 +121,13 @@ export default function Profile() {
               {/* Badges unlocked card */}
               <div className="glass-card profile-card">
                 <div>
-                  <h3 className="profile-card__title">
-                    <span>🎖️</span> Movie Badges
+                  <h3 className="profile-card__title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <Medal size={20} className="profile-card__icon" color="var(--color-gold)" /> Movie Badges
                   </h3>
                   <div className="profile-card__badges">
                     {badges.map((badge) => (
-                      <span key={badge} className="profile-card__badge">
-                        🌟 {badge}
+                      <span key={badge} className="profile-card__badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                        <Star size={14} fill="currentColor" color="var(--color-gold)" /> {badge}
                       </span>
                     ))}
                   </div>
@@ -140,8 +141,8 @@ export default function Profile() {
 
             {/* Favorite Genres Card */}
             <div className="glass-card profile-card profile-card--wide">
-              <h3 className="profile-card__title">
-                <span>🎭</span> Favorite Genres
+              <h3 className="profile-card__title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Film size={20} className="profile-card__icon" color="var(--color-primary)" /> Favorite Genres
               </h3>
               <div className="profile-card__genres">
                 {favGenres.map((genre) => (
@@ -160,7 +161,7 @@ export default function Profile() {
               
               {/* Watchlist sync */}
               <div className="glass-card profile-card profile-card--center">
-                <span className="profile-card__big-icon">📂</span>
+                <span className="profile-card__big-icon"><FolderHeart size={36} color="var(--color-gold)" opacity={0.8} /></span>
                 <div>
                   <h4 className="profile-card__subtitle">My Watchlist</h4>
                   <p className="profile-card__stat">
@@ -174,7 +175,7 @@ export default function Profile() {
 
               {/* Reviews vault */}
               <div className="glass-card profile-card profile-card--center profile-card--dashed">
-                <span className="profile-card__big-icon">📝</span>
+                <span className="profile-card__big-icon"><PenBox size={36} color="var(--color-primary)" opacity={0.8} /></span>
                 <div>
                   <h4 className="profile-card__subtitle">CineReviews</h4>
                   <p className="profile-card__desc">

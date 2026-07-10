@@ -3,6 +3,7 @@ import { useState } from 'react';
 import * as reviewService from '../services/reviewService';
 import { useAuth } from '../context/AuthContext';
 import PropTypes from 'prop-types';
+import { Star, PenBox, Trash2 } from 'lucide-react';
 
 export default function ReviewCard({ review, onRefresh }) {
   const { user, token } = useAuth();
@@ -52,16 +53,16 @@ export default function ReviewCard({ review, onRefresh }) {
       stars.push(
         <span
           key={i}
-          className={i <= value ? 'star star--filled' : 'star star--empty'}
-          style={{ cursor: interactive ? 'pointer' : 'default' }}
+          className="star"
+          style={{ cursor: interactive ? 'pointer' : 'default', display: 'inline-flex', padding: '0 2px' }}
           onClick={interactive ? () => setRating(i) : undefined}
           aria-hidden="true"
         >
-          {i <= value ? '★' : '☆'}
+          <Star size={16} fill={i <= value ? 'var(--color-gold)' : 'none'} color={i <= value ? 'var(--color-gold)' : 'var(--color-muted)'} />
         </span>
       );
     }
-    return <div className="review-card__stars">{stars}</div>;
+    return <div className="review-card__stars" style={{ display: 'flex', alignItems: 'center' }}>{stars}</div>;
   };
 
   // Format date from createdAt if no date field
@@ -89,10 +90,10 @@ export default function ReviewCard({ review, onRefresh }) {
         {isOwner && !editMode && (
           <div className="review-card__actions">
             <button type="button" className="btn btn--secondary btn--small" onClick={() => setEditMode(true)} disabled={submitting}>
-              ✎ Edit
+              <PenBox size={14} /> Edit
             </button>
-            <button type="button" className="btn btn--danger btn--small" onClick={handleDelete} disabled={submitting}>
-              🗑 Delete
+            <button type="button" className="btn btn--danger btn--small" onClick={handleDelete} disabled={submitting} style={{ background: 'transparent', color: 'var(--color-primary)', border: '1px solid var(--color-primary)' }}>
+              <Trash2 size={14} /> Delete
             </button>
           </div>
         )}

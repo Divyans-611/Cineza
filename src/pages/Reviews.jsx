@@ -1,9 +1,10 @@
 import PlaceholderPage from '../components/PlaceholderPage'
+import { MessageSquare } from 'lucide-react'
 
 export default function Reviews() {
   return (
     <PlaceholderPage
-      icon="⭐"
+      icon={<MessageSquare size={48} color="var(--color-primary)" />}
       title="Community Reviews"
       subtitle="Read what people are saying and share your own take on cinema."
       features={[

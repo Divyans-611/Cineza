@@ -3,6 +3,7 @@ import { useState } from 'react';
 import * as reviewService from '../services/reviewService';
 import { useAuth } from '../context/AuthContext';
 import PropTypes from 'prop-types';
+import { Star, AlertTriangle } from 'lucide-react';
 
 export default function ReviewForm({ movieId, movieTitle, moviePoster, onRefresh }) {
   const { token } = useAuth();
@@ -44,16 +45,16 @@ export default function ReviewForm({ movieId, movieTitle, moviePoster, onRefresh
       stars.push(
         <span
           key={i}
-          className={i <= rating ? 'star star--filled' : 'star star--empty'}
-          style={{ cursor: 'pointer' }}
+          className="star"
+          style={{ cursor: 'pointer', display: 'inline-flex', padding: '0 2px' }}
           onClick={() => setRating(i)}
           aria-hidden="true"
         >
-          {i <= rating ? '★' : '☆'}
+          <Star size={24} fill={i <= rating ? 'var(--color-gold)' : 'none'} color={i <= rating ? 'var(--color-gold)' : 'var(--color-muted)'} />
         </span>
       );
     }
-    return <div className="review-form__stars">{stars}</div>;
+    return <div className="review-form__stars" style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>{stars}</div>;
   };
 
   return (
@@ -70,8 +71,8 @@ export default function ReviewForm({ movieId, movieTitle, moviePoster, onRefresh
         required
       />
       {errorMsg && (
-        <p style={{ color: 'var(--color-accent, #e50914)', fontSize: '0.85rem', marginTop: '0.5rem' }}>
-          ⚠️ {errorMsg}
+        <p style={{ color: 'var(--color-accent, #e50914)', fontSize: '0.85rem', marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <AlertTriangle size={14} /> {errorMsg}
         </p>
       )}
       <div className="review-form__footer">

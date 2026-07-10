@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { Clapperboard, Eye, EyeOff } from 'lucide-react';
 
 export default function Signup() {
   const { register, clearAuthError, error } = useAuth();
@@ -77,24 +78,24 @@ export default function Signup() {
     <>
       <Navbar />
       <main className="page-shell">
-        <div className="page-shell__inner" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '70vh' }}>
-          <div className="glass-card" style={{ padding: '2.5rem', width: '100%', maxWidth: '440px', margin: '2rem auto' }}>
-            <header className="section-header" style={{ marginBottom: '1.75rem' }}>
-              <span className="section-header__icon" aria-hidden="true" style={{ fontSize: '2.5rem', marginBottom: '0.5rem', display: 'block' }}>🎬</span>
+        <div className="page-shell__inner auth-wrapper">
+          <div className="glass-card auth-card">
+            <header className="section-header auth-header" style={{ marginBottom: '1.75rem' }}>
+              <span className="section-header__icon" aria-hidden="true" style={{ marginBottom: '0.5rem', display: 'flex', justifyContent: 'center' }}><Clapperboard size={40} color="var(--color-primary)" /></span>
               <h1 className="section-header__title" style={{ fontSize: '1.75rem', fontWeight: '800' }}>Join Cineza</h1>
               <p className="section-header__subtitle" style={{ fontSize: '0.9rem' }}>Create a profile to unlock cinematic achievements</p>
             </header>
 
             {errorMsg && (
-              <div style={{ background: 'rgba(229, 9, 20, 0.1)', border: '1px solid var(--color-primary)', padding: '0.75rem 1rem', borderRadius: '8px', marginBottom: '1.25rem', fontSize: '0.85rem', color: '#ff4d4d', textAlign: 'center' }}>
+              <div className="alert-box alert-box--error">
                 {errorMsg}
               </div>
             )}
 
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
-              <div style={{ display: 'flex', gap: '1rem', width: '100%' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: 1 }}>
-                  <label htmlFor="name" style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--color-muted)' }}>Name</label>
+            <form onSubmit={handleSubmit} className="auth-form">
+              <div className="auth-field-row">
+                <div className="auth-field-col">
+                  <label htmlFor="name" className="auth-label">Name</label>
                   <input
                     type="text"
                     id="name"
@@ -103,11 +104,11 @@ export default function Signup() {
                     placeholder="Jane Doe"
                     required
                     disabled={loading}
-                    style={{ padding: '0.75rem 1rem', background: '#0b0f19', border: '1px solid var(--color-border)', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', outline: 'none', width: '100%' }}
+                    className="auth-input"
                   />
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: 1 }}>
-                  <label htmlFor="username" style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--color-muted)' }}>Username</label>
+                <div className="auth-field-col">
+                  <label htmlFor="username" className="auth-label">Username</label>
                   <input
                     type="text"
                     id="username"
@@ -116,13 +117,13 @@ export default function Signup() {
                     placeholder="janedoe"
                     required
                     disabled={loading}
-                    style={{ padding: '0.75rem 1rem', background: '#0b0f19', border: '1px solid var(--color-border)', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', outline: 'none', width: '100%' }}
+                    className="auth-input"
                   />
                 </div>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                <label htmlFor="email" style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--color-muted)' }}>Email Address</label>
+              <div className="auth-field-group">
+                <label htmlFor="email" className="auth-label">Email Address</label>
                 <input
                   type="email"
                   id="email"
@@ -131,13 +132,13 @@ export default function Signup() {
                   placeholder="name@example.com"
                   required
                   disabled={loading}
-                  style={{ padding: '0.75rem 1rem', background: '#0b0f19', border: '1px solid var(--color-border)', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', outline: 'none' }}
+                  className="auth-input"
                 />
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                <label htmlFor="password" style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--color-muted)' }}>Password</label>
-                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <div className="auth-field-group">
+                <label htmlFor="password" className="auth-label">Password</label>
+                <div className="auth-input-wrap">
                   <input
                     type={showPassword ? 'text' : 'password'}
                     id="password"
@@ -146,21 +147,22 @@ export default function Signup() {
                     placeholder="Min. 6 characters"
                     required
                     disabled={loading}
-                    style={{ padding: '0.75rem 3rem 0.75rem 1rem', background: '#0b0f19', border: '1px solid var(--color-border)', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', outline: 'none', width: '100%' }}
+                    className="auth-input"
+                    style={{ paddingRight: '3rem' }}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    style={{ position: 'absolute', right: '0.75rem', background: 'transparent', border: 'none', color: 'var(--color-muted)', cursor: 'pointer', fontSize: '1.1rem', padding: '0.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', outline: 'none' }}
+                    className="auth-toggle-btn"
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
-                    {showPassword ? '👁️' : '🙈'}
+                    {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
                   </button>
                 </div>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                <label htmlFor="confirmPassword" style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--color-muted)' }}>Confirm Password</label>
+              <div className="auth-field-group">
+                <label htmlFor="confirmPassword" className="auth-label">Confirm Password</label>
                 <input
                   type={showPassword ? 'text' : 'password'}
                   id="confirmPassword"
@@ -169,21 +171,21 @@ export default function Signup() {
                   placeholder="Re-enter password"
                   required
                   disabled={loading}
-                  style={{ padding: '0.75rem 1rem', background: '#0b0f19', border: '1px solid var(--color-border)', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', outline: 'none' }}
+                  className="auth-input"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="btn btn--primary primary-btn"
-                style={{ width: '100%', marginTop: '0.75rem', display: 'flex', justifyContent: 'center', alignItems: 'center', opacity: loading ? 0.7 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}
+                className="btn btn--primary primary-btn auth-submit-btn"
+                style={{ opacity: loading ? 0.7 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}
               >
                 {loading ? 'Creating account...' : 'Sign Up'}
               </button>
             </form>
 
-            <p style={{ marginTop: '1.75rem', textAlign: 'center', fontSize: '0.85rem', color: 'var(--color-muted)' }}>
+            <p className="auth-redirect-text">
               Already have an account?{' '}
               <Link to="/login" style={{ color: 'var(--color-gold)', fontWeight: '600' }}>
                 Sign in

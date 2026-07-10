@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { Heart } from 'lucide-react'
 
 const footerLinks = [
   { label: 'Home', to: '/' },
@@ -46,7 +47,7 @@ export default function Footer() {
             © {new Date().getFullYear()} Cineza. All rights reserved.
           </p>
           <p className="footer__made">
-            Made with <span className="footer__heart">❤️</span> for cinema lovers
+            Made with <span className="footer__heart"><Heart size={14} fill="var(--color-primary)" color="var(--color-primary)" style={{ display: 'inline', verticalAlign: 'middle' }} /></span> for cinema lovers
           </p>
         </div>
       </div>

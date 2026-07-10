@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { getWatchlist } from '../services/watchlistService';
 import { getDirectorsCutRecommendations } from '../utils/recommendationEngine';
 import MovieSkeleton from './MovieSkeleton';
+import { Clapperboard, Sparkles, Star, Lightbulb, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function DirectorsCut() {
   const { isAuthenticated, token } = useAuth();
@@ -70,7 +71,7 @@ export default function DirectorsCut() {
       <div className="section__inner directors-cut__inner">
         <header className="directors-cut__header">
            <div className="directors-cut__title-group">
-             <span className="directors-cut__eyebrow" aria-hidden="true">🎬</span>
+             <Clapperboard className="directors-cut__eyebrow-icon" size={24} color="var(--color-primary)" />
              <h2 className="directors-cut__title">Director's Cut</h2>
              <p className="directors-cut__subtitle">
                Handpicked recommendations crafted from your cinematic taste.
@@ -85,7 +86,7 @@ export default function DirectorsCut() {
                   onClick={() => scroll('left')}
                   aria-label="Scroll left"
                 >
-                  ←
+                  <ChevronLeft size={20} />
                 </button>
                 <button 
                   type="button" 
@@ -93,7 +94,7 @@ export default function DirectorsCut() {
                   onClick={() => scroll('right')}
                   aria-label="Scroll right"
                 >
-                  →
+                  <ChevronRight size={20} />
                 </button>
               </div>
            )}
@@ -109,7 +110,7 @@ export default function DirectorsCut() {
           </div>
         ) : recommendations.length === 0 ? (
           <div className="directors-cut__empty glass-card">
-             <span className="directors-cut__empty-icon" aria-hidden="true">✨</span>
+             <Sparkles className="directors-cut__empty-icon" size={32} color="var(--color-gold)" />
              <h3 className="directors-cut__empty-title">Unlock Your Cut</h3>
              <p className="directors-cut__empty-text">
                Start building your watchlist to unlock personalized Director's Cut recommendations.
@@ -145,7 +146,9 @@ export default function DirectorsCut() {
                           <div className="dc-card__gradient"></div>
                           
                           {movie.rating && movie.rating !== 'N/A' && (
-                            <span className="dc-card__rating">★ {movie.rating}</span>
+                            <span className="dc-card__rating">
+                              <Star size={12} fill="currentColor" /> {movie.rating}
+                            </span>
                           )}
                        </div>
                        
@@ -158,7 +161,7 @@ export default function DirectorsCut() {
                           </div>
                           {movie.reason && (
                             <p className="dc-card__reason">
-                              <span aria-hidden="true">💡</span> {movie.reason}
+                              <Lightbulb size={14} className="dc-card__reason-icon" /> {movie.reason}
                             </p>
                           )}
                        </div>

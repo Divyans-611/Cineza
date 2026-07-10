@@ -1,22 +1,28 @@
+import { Film, Ghost, Popcorn, Trophy } from 'lucide-react'
+
 export default function GamificationPreview() {
   const badges = [
     {
-      emoji: '🎬',
+      id: 'rookie',
+      icon: <Film size={32} color="var(--color-primary)" />,
       title: 'Cineza Rookie',
       description: 'Watch your first 5 movies on Cineza.',
     },
     {
-      emoji: '👻',
+      id: 'survivor',
+      icon: <Ghost size={32} color="var(--color-primary)" />,
       title: 'Horror Survivor',
       description: 'Finish 10 horror films without hiding.',
     },
     {
-      emoji: '🍿',
+      id: 'binger',
+      icon: <Popcorn size={32} color="var(--color-primary)" />,
       title: 'Weekend Binger',
       description: 'Log 3 movies in a single weekend.',
     },
     {
-      emoji: '🏆',
+      id: 'club',
+      icon: <Trophy size={32} color="var(--color-primary)" />,
       title: '100 Movies Club',
       description: 'Reach 100 watched titles on your profile.',
     },
@@ -33,10 +39,10 @@ export default function GamificationPreview() {
 
         <div className="gamification__grid">
           {badges.map((badge) => (
-            <article key={badge.title} className="badge-card">
-              <span className="badge-card__emoji" aria-hidden="true">
-                {badge.emoji}
-              </span>
+            <article key={badge.id} className="badge-card">
+              <div className="badge-card__icon" aria-hidden="true">
+                {badge.icon}
+              </div>
               <h3 className="badge-card__title">{badge.title}</h3>
               <p className="badge-card__desc">{badge.description}</p>
             </article>

@@ -3,13 +3,14 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getFirstName, getInitials } from '../utils/authUtils';
 import GlobalSearch from './GlobalSearch';
+import { Home, Film, Sparkles, Folder, PenBox, Search, ChevronDown, User, LogOut, X } from 'lucide-react';
 
 const navLinks = [
-  { label: 'Home', to: '/', icon: '🏠' },
-  { label: 'Movies', to: '/movies', icon: '🎬' },
-  { label: 'AI Picks', to: '/ai-picks', icon: '✨' },
-  { label: 'Watchlist', to: '/watchlist', icon: '📂' },
-  { label: 'Reviews', to: '/reviews', icon: '📝' },
+  { label: 'Home', to: '/', icon: <Home size={18} /> },
+  { label: 'Movies', to: '/movies', icon: <Film size={18} /> },
+  { label: 'AI Picks', to: '/ai-picks', icon: <Sparkles size={18} /> },
+  { label: 'Watchlist', to: '/watchlist', icon: <Folder size={18} /> },
+  { label: 'Reviews', to: '/reviews', icon: <PenBox size={18} /> },
 ];
 
 function navLinkClass({ isActive }) {
@@ -117,10 +118,7 @@ export default function Navbar() {
               onClick={() => setIsSearchOpen(true)}
               aria-label="Open global search"
             >
-              <svg className="search-trigger-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-              </svg>
+              <Search className="search-trigger-icon" size={16} strokeWidth={2.5} />
               <span className="search-trigger-label">Search</span>
               <kbd className="shortcut-key">⌘K</kbd>
             </button>
@@ -152,9 +150,12 @@ export default function Navbar() {
                   <span className="navbar__user-name">
                     {getFirstName(user?.name)}
                   </span>
-                  <svg className="navbar__chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s ease' }}>
-                    <polyline points="6 9 12 15 18 9" />
-                  </svg>
+                  <ChevronDown 
+                    className="navbar__chevron" 
+                    size={16} 
+                    strokeWidth={2.5} 
+                    style={{ transform: isDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s ease' }} 
+                  />
                 </button>
 
                 {/* Dropdown */}
@@ -175,20 +176,20 @@ export default function Navbar() {
                     </div>
                     <div className="navbar__dropdown-divider" />
                     <Link to="/profile" className="navbar__dropdown-item" onClick={() => setIsDropdownOpen(false)}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                      <User size={16} />
                       Profile
                     </Link>
                     <Link to="/watchlist" className="navbar__dropdown-item" onClick={() => setIsDropdownOpen(false)}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                      <Folder size={16} />
                       Watchlist
                     </Link>
                     <Link to="/reviews" className="navbar__dropdown-item" onClick={() => setIsDropdownOpen(false)}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                      <PenBox size={16} />
                       My Reviews
                     </Link>
                     <div className="navbar__dropdown-divider" />
                     <button className="navbar__dropdown-item navbar__dropdown-item--logout" onClick={handleLogout}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                      <LogOut size={16} />
                       Log Out
                     </button>
                   </div>
@@ -209,10 +210,7 @@ export default function Navbar() {
         <div className="mobile-menu__header">
           <span className="mobile-menu__brand">Cineza</span>
           <button className="mobile-menu__close" onClick={() => setIsMobileMenuOpen(false)} aria-label="Close menu">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
+            <X size={24} strokeWidth={2.5} />
           </button>
         </div>
 
@@ -247,6 +245,7 @@ export default function Navbar() {
               </div>
             </div>
             <button className="btn btn--secondary mobile-menu__logout" onClick={handleLogout}>
+              <LogOut size={16} />
               Log Out
             </button>
           </div>

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchMovies } from '../services/movieService';
 import { normalizeTMDBMovie } from '../utils/movieUtils';
+import { Film, Star } from 'lucide-react';
 
 export default function GlobalSearch({ isOpen, onClose }) {
   const [query, setQuery] = useState('');
@@ -180,14 +181,14 @@ export default function GlobalSearch({ isOpen, onClose }) {
                     <img src={movie.poster} alt={movie.title} className="search-result-poster" loading="lazy" />
                   ) : (
                     <div className="search-result-poster search-result-poster--fallback">
-                      🎬
+                      <Film size={24} opacity={0.5} />
                     </div>
                   )}
                   <div className="search-result-content">
                     <h4 className="search-result-title">{movie.title}</h4>
                     <div className="search-result-meta">
                       <span>{movie.year}</span>
-                      {movie.rating !== 'N/A' && <span>★ {movie.rating}</span>}
+                      {movie.rating !== 'N/A' && <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}><Star size={12} fill="currentColor" color="var(--color-gold)" /> {movie.rating}</span>}
                       <span>{movie.genre}</span>
                     </div>
                     <p className="search-result-overview">

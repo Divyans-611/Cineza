@@ -5,6 +5,7 @@ import Footer from '../components/Footer'
 import WatchlistCard from '../components/WatchlistCard'
 import { useAuth } from '../context/AuthContext'
 import { getWatchlist, removeFromWatchlist } from '../services/watchlistService'
+import { Film, Inbox, AlertTriangle } from 'lucide-react'
 
 export default function Watchlist() {
   const { isAuthenticated, token, loading: authLoading } = useAuth()
@@ -98,7 +99,7 @@ export default function Watchlist() {
         <main className="page-shell">
           <div className="page-shell__inner">
             <article className="empty-state glass-card">
-              <span className="empty-state__icon" aria-hidden="true">🍿</span>
+              <Film size={48} opacity={0.5} className="empty-state__icon" color="var(--color-gold)" />
               <h1 className="empty-state__title">Your Watchlist Awaits</h1>
               <p className="empty-state__text">Log in to build your Cineza watchlist and keep track of movies you want to see.</p>
               <Link to="/login" className="btn btn--primary">Log In to Cineza</Link>
@@ -148,12 +149,12 @@ export default function Watchlist() {
               <h2 style={{ color: 'var(--color-text)' }}>Loading your watchlist...</h2>
             </div>
           ) : error ? (
-            <div style={{ backgroundColor: 'rgba(229, 9, 20, 0.1)', border: '1px solid #e50914', color: '#fff', padding: '1.5rem', borderRadius: '12px', textAlign: 'center' }}>
-              ⚠️ {error}
+            <div className="error-banner">
+              <AlertTriangle size={20} color="var(--color-primary)" /> {error}
             </div>
           ) : movies.length === 0 ? (
             <article className="empty-state glass-card">
-              <span className="empty-state__icon" aria-hidden="true">📭</span>
+              <Inbox size={48} opacity={0.5} className="empty-state__icon" color="var(--color-muted)" />
               <h2 className="empty-state__title">Your watchlist is empty</h2>
               <p className="empty-state__text">Start exploring movies and add them to your watchlist to keep track of what you want to watch next.</p>
               <Link to="/movies" className="btn btn--primary">Explore Movies</Link>

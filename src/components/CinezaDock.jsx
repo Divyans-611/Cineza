@@ -1,13 +1,14 @@
 import { Link } from 'react-router-dom'
+import { Film, MessageSquare, Sparkles, Award, FolderHeart, User } from 'lucide-react'
 
 export default function CinezaDock() {
   const dockItems = [
-    { icon: '🎬', label: 'Movies', to: '/movies' },
-    { icon: '⭐', label: 'Reviews', to: '/reviews' },
-    { icon: '🤖', label: 'AI Picks', to: '/ai-picks' },
-    { icon: '🏆', label: 'Badges', to: '/profile' },
-    { icon: '🍿', label: 'Watchlist', to: '/watchlist' },
-    { icon: '👤', label: 'Profile', to: '/profile' },
+    { icon: <Film size={24} />, label: 'Movies', to: '/movies' },
+    { icon: <MessageSquare size={24} />, label: 'Reviews', to: '/reviews' },
+    { icon: <Sparkles size={24} />, label: 'AI Picks', to: '/ai-picks' },
+    { icon: <Award size={24} />, label: 'Badges', to: '/profile' },
+    { icon: <FolderHeart size={24} />, label: 'Watchlist', to: '/watchlist' },
+    { icon: <User size={24} />, label: 'Profile', to: '/profile' },
   ]
 
   return (

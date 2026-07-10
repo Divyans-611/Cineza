@@ -4,6 +4,7 @@ import { movies as dummyMovies } from '../data/movies'
 import { getTrendingMovies, getPopularMovies } from '../services/movieService'
 import { normalizeTMDBMovie } from '../utils/movieUtils'
 import MovieSection from './MovieSection'
+import { AlertTriangle } from 'lucide-react'
 
 export default function FeaturedMovies() {
   const [trending, setTrending] = useState([])
@@ -99,8 +100,8 @@ export default function FeaturedMovies() {
     <div className="home-sections">
       {isError && (
         <div className="section__inner">
-          <p className="fallback-note" style={{ color: 'var(--color-muted)', fontSize: '0.875rem', marginBottom: '0.5rem', textAlign: 'center' }}>
-            ⚠️ Showing offline picks. Connect to backend API for live movies.
+          <p className="fallback-note" style={{ color: 'var(--color-muted)', fontSize: '0.875rem', marginBottom: '0.5rem', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem' }}>
+            <AlertTriangle size={16} color="var(--color-gold)" /> Showing offline picks. Connect to backend API for live movies.
           </p>
         </div>
       )}

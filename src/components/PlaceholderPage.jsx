@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom'
 import Navbar from './Navbar'
 import Footer from './Footer'
+import { Clapperboard } from 'lucide-react'
 
 export default function PlaceholderPage({
   title,
   subtitle,
-  icon = '🎬',
+  icon = <Clapperboard size={32} color="var(--color-primary)" />,
   features = [],
   showTagline = false,
   phaseNote = 'This feature will be connected in a later phase.',
@@ -21,7 +22,7 @@ export default function PlaceholderPage({
       <main className="page-shell">
         <div className="page-shell__inner">
           <header className="section-header">
-            <span className="section-header__icon" aria-hidden="true">
+            <span className="section-header__icon" aria-hidden="true" style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
               {icon}
             </span>
             <h1 className="section-header__title">{title}</h1>

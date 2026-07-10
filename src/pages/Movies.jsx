@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
+import { Film, Search, Loader2, AlertTriangle } from 'lucide-react'
 import MovieCard from '../components/MovieCard'
 import { movies as dummyMovies } from '../data/movies'
 import { getTrendingMovies, searchMovies } from '../services/movieService'
@@ -113,7 +114,7 @@ export default function Movies() {
           <div className="movies-toolbar glass-card">
             <label className="movies-search" htmlFor="movie-search">
               <span className="movies-search__icon" aria-hidden="true">
-                🔍
+                <Search size={20} />
               </span>
               <input
                 id="movie-search"
@@ -143,8 +144,8 @@ export default function Movies() {
           </div>
           
           {error && (
-            <div style={{ backgroundColor: 'rgba(229, 9, 20, 0.1)', border: '1px solid #e50914', color: '#fff', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem' }}>
-              ⚠️ {error}
+            <div className="error-banner">
+              <AlertTriangle size={20} color="var(--color-primary)" /> {error}
             </div>
           )}
 
@@ -165,8 +166,8 @@ export default function Movies() {
 
           {isLoading ? (
             <div className="empty-state glass-card movies-empty">
-              <span className="empty-state__icon" aria-hidden="true">
-                ⏳
+              <span className="empty-state__icon" aria-hidden="true" style={{ display: 'flex', justifyContent: 'center' }}>
+                <Loader2 size={40} className="spinning-loader" color="var(--color-primary)" opacity={0.7} />
               </span>
               <p className="empty-state__title">Loading...</p>
             </div>
@@ -178,8 +179,8 @@ export default function Movies() {
             </div>
           ) : (
             <div className="empty-state glass-card movies-empty">
-              <span className="empty-state__icon" aria-hidden="true">
-                🎬
+              <span className="empty-state__icon" aria-hidden="true" style={{ display: 'flex', justifyContent: 'center' }}>
+                <Film size={40} opacity={0.5} color="var(--color-gold)" />
               </span>
               <p className="empty-state__title">No movies found</p>
               <p className="empty-state__text">
