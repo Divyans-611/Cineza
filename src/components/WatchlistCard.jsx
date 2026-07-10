@@ -2,10 +2,13 @@ import { Link } from 'react-router-dom'
 import { Film, X, Star } from 'lucide-react'
 
 export default function WatchlistCard({ movie, onRemove }) {
+  const mediaType = movie.mediaType || 'movie'
+  const isTv = mediaType === 'tv'
+
   const handleRemove = (e) => {
     e.preventDefault()
     e.stopPropagation()
-    onRemove(movie.movieId)
+    onRemove(movie.movieId, mediaType)
   }
 
   const posterUrl = movie.posterPath 
@@ -20,8 +23,10 @@ export default function WatchlistCard({ movie, onRemove }) {
     ? new Date(movie.addedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) 
     : ''
 
+  const detailsUrl = isTv ? `/tv/${movie.movieId}` : `/movies/${movie.movieId}`
+
   return (
-    <Link to={`/movies/${movie.movieId}`} className="watchlist-card glass-card">
+    <Link to={detailsUrl} className="watchlist-card glass-card">
       <div className="watchlist-card__poster-wrap">
         {posterUrl ? (
           <img
@@ -37,6 +42,25 @@ export default function WatchlistCard({ movie, onRemove }) {
             <small className="watchlist-card__fallback-text">No Poster</small>
           </div>
         )}
+
+        <span className="search-result-badge" style={{
+          position: 'absolute',
+          top: '0.55rem',
+          left: '0.55rem',
+          zIndex: 3,
+          padding: '0.15rem 0.35rem',
+          fontSize: '0.62rem',
+          fontWeight: 'bold',
+          textTransform: 'uppercase',
+          borderRadius: '4px',
+          background: isTv ? 'rgba(59, 130, 246, 0.25)' : 'rgba(239, 68, 68, 0.25)',
+          color: isTv ? '#60a5fa' : '#f87171',
+          border: isTv ? '1px solid rgba(59, 130, 246, 0.3)' : '1px solid rgba(239, 68, 68, 0.3)',
+          backdropFilter: 'blur(6px)'
+        }}>
+          {isTv ? 'TV' : 'Movie'}
+        </span>
+
         <div className="watchlist-card__overlay">
           <button 
             type="button" 

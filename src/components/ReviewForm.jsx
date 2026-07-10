@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import PropTypes from 'prop-types';
 import { Star, AlertTriangle } from 'lucide-react';
 
-export default function ReviewForm({ movieId, movieTitle, moviePoster, onRefresh }) {
+export default function ReviewForm({ movieId, movieTitle, moviePoster, onRefresh, mediaType = 'movie' }) {
   const { token } = useAuth();
   const [rating, setRating] = useState(0);
   const [text, setText] = useState('');
@@ -20,13 +20,14 @@ export default function ReviewForm({ movieId, movieTitle, moviePoster, onRefresh
     setSubmitting(true);
     setErrorMsg(null);
     try {
-      // Backend requires: movieId, movieTitle, rating, review (not 'text')
+      // Backend requires: movieId, movieTitle, rating, review (not 'text'), and mediaType
       await reviewService.createReview({
         movieId,
         movieTitle: movieTitle || String(movieId),
         moviePoster: moviePoster || '',
         rating,
         review: text,   // backend field is 'review', not 'text'
+        mediaType,
       }, token);
       setRating(0);
       setText('');
@@ -96,4 +97,5 @@ ReviewForm.propTypes = {
   movieTitle: PropTypes.string,
   moviePoster: PropTypes.string,
   onRefresh: PropTypes.func.isRequired,
+  mediaType: PropTypes.string,
 };

@@ -29,22 +29,23 @@ export const addToWatchlist = async (req, res, next) => {
       releaseDate = "",
       rating = 0,
       overview = "",
-      genres = []
+      genres = [],
+      mediaType = "movie"
     } = req.body || {};
 
     if (!movieId || !title) {
       return res.status(400).json({
         success: false,
-        message: "Movie ID and title are required"
+        message: "ID and title are required"
       });
     }
 
-    // Check if movie already exists in user's watchlist
-    const existingItem = await Watchlist.findOne({ user: req.user._id, movieId })
+    // Check if media already exists in user's watchlist
+    const existingItem = await Watchlist.findOne({ user: req.user._id, movieId, mediaType })
     
     if (existingItem) {
       res.status(409)
-      const error = new Error('Movie already in watchlist')
+      const error = new Error('Media already in watchlist')
       return next(error)
     }
 
@@ -58,11 +59,12 @@ export const addToWatchlist = async (req, res, next) => {
       rating,
       overview,
       genres,
+      mediaType,
     })
 
     res.status(201).json({
       success: true,
-      message: 'Movie added to watchlist',
+      message: 'Added to watchlist',
       data: watchlistItem,
     })
   } catch (error) {
@@ -70,38 +72,40 @@ export const addToWatchlist = async (req, res, next) => {
   }
 }
 
-// @desc    Remove movie from watchlist
+// @desc    Remove movie/tv from watchlist
 // @route   DELETE /api/watchlist/:movieId
 // @access  Private
 export const removeFromWatchlist = async (req, res, next) => {
   try {
     const { movieId } = req.params
+    const mediaType = req.query.mediaType || "movie"
 
-    const watchlistItem = await Watchlist.findOneAndDelete({ user: req.user._id, movieId })
+    const watchlistItem = await Watchlist.findOneAndDelete({ user: req.user._id, movieId, mediaType })
 
     if (!watchlistItem) {
       res.status(404)
-      const error = new Error('Movie not found in watchlist')
+      const error = new Error('Item not found in watchlist')
       return next(error)
     }
 
     res.status(200).json({
       success: true,
-      message: 'Movie removed from watchlist',
+      message: 'Removed from watchlist',
     })
   } catch (error) {
     next(error)
   }
 }
 
-// @desc    Check if movie is in watchlist
+// @desc    Check if movie/tv is in watchlist
 // @route   GET /api/watchlist/check/:movieId
 // @access  Private
 export const checkWatchlist = async (req, res, next) => {
   try {
     const { movieId } = req.params
+    const mediaType = req.query.mediaType || "movie"
 
-    const watchlistItem = await Watchlist.findOne({ user: req.user._id, movieId })
+    const watchlistItem = await Watchlist.findOne({ user: req.user._id, movieId, mediaType })
 
     res.status(200).json({
       success: true,

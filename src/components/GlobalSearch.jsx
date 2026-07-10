@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { searchMovies } from '../services/movieService';
+import { searchMulti } from '../services/movieService';
 import { normalizeTMDBMovie } from '../utils/movieUtils';
 import { Film, Star } from 'lucide-react';
 
 export default function GlobalSearch({ isOpen, onClose }) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
+  const [filter, setFilter] = useState('all');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   
@@ -19,8 +20,6 @@ export default function GlobalSearch({ isOpen, onClose }) {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         if (!isOpen) {
-          // Trigger parent's open — but since we don't have the setter,
-          // we simulate by dispatching a custom event
           window.dispatchEvent(new CustomEvent('cineza:open-search'));
         }
       }
@@ -36,6 +35,7 @@ export default function GlobalSearch({ isOpen, onClose }) {
     } else {
       setQuery('');
       setResults([]);
+      setFilter('all');
       setError(null);
     }
   }, [isOpen]);
@@ -66,9 +66,16 @@ export default function GlobalSearch({ isOpen, onClose }) {
 
     const timer = setTimeout(async () => {
       try {
-        const data = await searchMovies(trimmedQuery);
+        const data = await searchMulti(trimmedQuery);
         if (data.results) {
-          setResults(data.results.map(normalizeTMDBMovie));
+          const filtered = data.results
+            .filter(item => item.media_type === 'movie' || item.media_type === 'tv')
+            .map(item => {
+              const normalized = normalizeTMDBMovie(item);
+              normalized.mediaType = item.media_type;
+              return normalized;
+            });
+          setResults(filtered);
         } else {
           setResults([]);
         }
@@ -83,14 +90,23 @@ export default function GlobalSearch({ isOpen, onClose }) {
     return () => clearTimeout(timer);
   }, [query]);
 
-  const handleSelect = (id) => {
+  const handleSelect = (id, mediaType) => {
     onClose();
-    navigate(`/movies/${id}`);
+    if (mediaType === 'tv') {
+      navigate(`/tv/${id}`);
+    } else {
+      navigate(`/movies/${id}`);
+    }
   };
 
   const handleChipClick = (term) => {
     setQuery(term);
   };
+
+  const filteredResults = results.filter(item => {
+    if (filter === 'all') return true;
+    return item.mediaType === filter;
+  });
 
   if (!isOpen) return null;
 
@@ -107,10 +123,10 @@ export default function GlobalSearch({ isOpen, onClose }) {
               ref={inputRef}
               className="search-input"
               type="text"
-              placeholder="Search movies, directors, moods..."
+              placeholder="Search movies, TV shows, titles..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              aria-label="Search movies"
+              aria-label="Search entertainment"
             />
             {query && (
               <button className="search-clear-btn" onClick={() => setQuery('')} aria-label="Clear search">
@@ -122,6 +138,56 @@ export default function GlobalSearch({ isOpen, onClose }) {
             )}
             <kbd className="search-esc-hint">ESC</kbd>
           </div>
+
+          {query.trim().length >= 2 && results.length > 0 && (
+            <div className="search-filter-tabs" style={{ display: 'flex', gap: '0.5rem', padding: '0.75rem 1.5rem 0', borderBottom: 'none' }}>
+              <button 
+                className={`search-filter-tab ${filter === 'all' ? 'active' : ''}`} 
+                onClick={() => setFilter('all')}
+                style={{
+                  background: filter === 'all' ? 'rgba(255,255,255,0.1)' : 'transparent',
+                  border: 'none',
+                  color: 'var(--color-text)',
+                  fontSize: '0.82rem',
+                  padding: '0.25rem 0.75rem',
+                  borderRadius: '6px',
+                  cursor: 'pointer'
+                }}
+              >
+                All
+              </button>
+              <button 
+                className={`search-filter-tab ${filter === 'movie' ? 'active' : ''}`} 
+                onClick={() => setFilter('movie')}
+                style={{
+                  background: filter === 'movie' ? 'rgba(255,255,255,0.1)' : 'transparent',
+                  border: 'none',
+                  color: 'var(--color-text)',
+                  fontSize: '0.82rem',
+                  padding: '0.25rem 0.75rem',
+                  borderRadius: '6px',
+                  cursor: 'pointer'
+                }}
+              >
+                Movies
+              </button>
+              <button 
+                className={`search-filter-tab ${filter === 'tv' ? 'active' : ''}`} 
+                onClick={() => setFilter('tv')}
+                style={{
+                  background: filter === 'tv' ? 'rgba(255,255,255,0.1)' : 'transparent',
+                  border: 'none',
+                  color: 'var(--color-text)',
+                  fontSize: '0.82rem',
+                  padding: '0.25rem 0.75rem',
+                  borderRadius: '6px',
+                  cursor: 'pointer'
+                }}
+              >
+                TV Shows
+              </button>
+            </div>
+          )}
         </header>
 
         <div className="search-results">
@@ -131,11 +197,11 @@ export default function GlobalSearch({ isOpen, onClose }) {
                 <circle cx="11" cy="11" r="8" />
                 <line x1="21" y1="21" x2="16.65" y2="16.65" />
               </svg>
-              <p className="search-state-text">Search for a movie, mood, or title to begin.</p>
+              <p className="search-state-text">Search for a movie or TV show to begin.</p>
               <div className="search-chips">
                 <button className="search-chip" onClick={() => handleChipClick('Interstellar')}>Interstellar</button>
-                <button className="search-chip" onClick={() => handleChipClick('Parasite')}>Parasite</button>
-                <button className="search-chip" onClick={() => handleChipClick('Batman')}>Batman</button>
+                <button className="search-chip" onClick={() => handleChipClick('Stranger Things')}>Stranger Things</button>
+                <button className="search-chip" onClick={() => handleChipClick('Breaking Bad')}>Breaking Bad</button>
                 <button className="search-chip" onClick={() => handleChipClick('Dune')}>Dune</button>
               </div>
             </div>
@@ -161,38 +227,52 @@ export default function GlobalSearch({ isOpen, onClose }) {
             </div>
           )}
 
-          {!isLoading && !error && query.trim().length >= 2 && results.length === 0 && (
+          {!isLoading && !error && query.trim().length >= 2 && filteredResults.length === 0 && (
             <div className="search-state search-state--empty">
               <svg className="search-state-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
                 <circle cx="12" cy="12" r="10" />
                 <line x1="12" y1="17" x2="12.01" y2="17" />
               </svg>
-              <p className="search-state-text">No movies found for &ldquo;{query.trim()}&rdquo;</p>
-              <p className="search-state-hint">Try a different title or keyword.</p>
+              <p className="search-state-text">No results found for &ldquo;{query.trim()}&rdquo;</p>
+              <p className="search-state-hint">Try a different title or adjust the filters.</p>
             </div>
           )}
 
-          {!isLoading && !error && results.length > 0 && (
+          {!isLoading && !error && filteredResults.length > 0 && (
             <div className="search-results-list">
-              {results.map(movie => (
-                <div key={movie.id} className="search-result-card" onClick={() => handleSelect(movie.id)} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter') handleSelect(movie.id); }}>
-                  {movie.poster ? (
-                    <img src={movie.poster} alt={movie.title} className="search-result-poster" loading="lazy" />
+              {filteredResults.map(item => (
+                <div key={item.id} className="search-result-card" onClick={() => handleSelect(item.id, item.mediaType)} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter') handleSelect(item.id, item.mediaType); }}>
+                  {item.poster ? (
+                    <img src={item.poster} alt={item.title} className="search-result-poster" loading="lazy" />
                   ) : (
                     <div className="search-result-poster search-result-poster--fallback">
                       <Film size={24} opacity={0.5} />
                     </div>
                   )}
                   <div className="search-result-content">
-                    <h4 className="search-result-title">{movie.title}</h4>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
+                      <h4 className="search-result-title" style={{ margin: 0 }}>{item.title}</h4>
+                      <span className="search-result-badge" style={{
+                        padding: '0.1rem 0.35rem',
+                        fontSize: '0.62rem',
+                        fontWeight: 'bold',
+                        textTransform: 'uppercase',
+                        borderRadius: '4px',
+                        background: item.mediaType === 'tv' ? 'rgba(59, 130, 246, 0.2)' : 'rgba(239, 68, 68, 0.2)',
+                        color: item.mediaType === 'tv' ? '#60a5fa' : '#f87171',
+                        border: item.mediaType === 'tv' ? '1px solid rgba(59, 130, 246, 0.3)' : '1px solid rgba(239, 68, 68, 0.3)'
+                      }}>
+                        {item.mediaType === 'tv' ? 'TV' : 'Movie'}
+                      </span>
+                    </div>
                     <div className="search-result-meta">
-                      <span>{movie.year}</span>
-                      {movie.rating !== 'N/A' && <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}><Star size={12} fill="currentColor" color="var(--color-gold)" /> {movie.rating}</span>}
-                      <span>{movie.genre}</span>
+                      <span>{item.year}</span>
+                      {item.rating !== 'N/A' && <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}><Star size={12} fill="currentColor" color="var(--color-gold)" /> {item.rating}</span>}
+                      <span>{item.genre}</span>
                     </div>
                     <p className="search-result-overview">
-                      {movie.overview}
+                      {item.overview}
                     </p>
                   </div>
                 </div>

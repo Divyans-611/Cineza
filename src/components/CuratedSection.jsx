@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import MovieCard from './MovieCard';
+import MediaCard from './MediaCard';
 import { getMovieDetails } from '../services/movieService';
 import { normalizeTMDBDetails } from '../utils/movieUtils';
 
@@ -78,7 +78,7 @@ export default function CuratedSection({ title, description, moodTag, movieIds }
           <>
             {movies.map(movie => (
               <div key={movie.id} className="curated-card-wrap">
-                <MovieCard movie={movie} />
+                <MediaCard media={movie} />
               </div>
             ))}
           </>

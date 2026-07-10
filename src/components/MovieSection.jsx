@@ -1,4 +1,4 @@
-import MovieCard from './MovieCard'
+import MediaCard from './MediaCard'
 import MovieSkeleton from './MovieSkeleton'
 import { Film } from 'lucide-react'
 
@@ -33,7 +33,7 @@ export default function MovieSection({ title, subtitle, movies, isLoading, isErr
         ) : !movies || movies.length === 0 ? (
           <div className="movie-section__empty glass-card">
             <Film size={48} opacity={0.5} className="movie-section__empty-icon" />
-            <h3 className="movie-section__empty-title">No Movies Available</h3>
+            <h3 className="movie-section__empty-title">No Media Available</h3>
             <p className="movie-section__empty-text">{emptyMessage || 'Check back later for fresh updates.'}</p>
           </div>
         ) : (
@@ -41,7 +41,7 @@ export default function MovieSection({ title, subtitle, movies, isLoading, isErr
             <div className="movie-section__shelf">
               {movies.map((movie) => (
                 <div key={movie.id} className="movie-section__item">
-                  <MovieCard movie={movie} />
+                  <MediaCard media={movie} />
                 </div>
               ))}
             </div>

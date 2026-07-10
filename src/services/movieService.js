@@ -63,3 +63,9 @@ export const getTopRatedMovies = () => fetchAPI('/api/movies/top-rated');
 
 // Discover movies by genre ID
 export const getMoviesByGenre = (genreId) => fetchAPI(`/api/movies/genre/${genreId}`);
+
+// Search across movies and TV shows (multi-search)
+export const searchMulti = (query) => {
+  if (!query) return Promise.resolve([]);
+  return fetchAPI(`/api/movies/search/multi?query=${encodeURIComponent(query)}`);
+};

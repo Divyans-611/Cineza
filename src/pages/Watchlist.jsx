@@ -48,19 +48,19 @@ export default function Watchlist() {
     }
   }, [isAuthenticated, token, authLoading])
 
-  const handleRemove = async (movieId) => {
+  const handleRemove = async (movieId, mediaType = 'movie') => {
     // Optimistic UI update
     const previousMovies = [...movies]
-    setMovies(movies.filter((m) => m.movieId !== movieId))
+    setMovies(movies.filter((m) => !(m.movieId === movieId && (m.mediaType || 'movie') === mediaType)))
     setRemoveMessage('Removed from watchlist')
 
     try {
-      await removeFromWatchlist(movieId, token)
+      await removeFromWatchlist(movieId, token, mediaType)
     } catch (err) {
       console.error('Failed to remove from watchlist:', err)
       // Revert on error
       setMovies(previousMovies)
-      setRemoveMessage('Failed to remove movie')
+      setRemoveMessage('Failed to remove item')
     }
   }
 
@@ -119,7 +119,7 @@ export default function Watchlist() {
           <div className="watchlist-header">
             <div>
               <h1 className="section-header__title" style={{ margin: '0 0 0.25rem', textAlign: 'left' }}>My Watchlist</h1>
-              <p className="watchlist-count">{movies.length} {movies.length === 1 ? 'movie' : 'movies'} saved</p>
+              <p className="watchlist-count">{movies.length} {movies.length === 1 ? 'item' : 'items'} saved</p>
             </div>
             
             {movies.length > 0 && (
@@ -156,14 +156,14 @@ export default function Watchlist() {
             <article className="empty-state glass-card">
               <Inbox size={48} opacity={0.5} className="empty-state__icon" color="var(--color-muted)" />
               <h2 className="empty-state__title">Your watchlist is empty</h2>
-              <p className="empty-state__text">Start exploring movies and add them to your watchlist to keep track of what you want to watch next.</p>
-              <Link to="/movies" className="btn btn--primary">Explore Movies</Link>
+              <p className="empty-state__text">Start exploring movies & TV shows and add them to your watchlist to keep track of what you want to watch next.</p>
+              <Link to="/" className="btn btn--primary">Explore Entertainment</Link>
             </article>
           ) : (
             <div className="watchlist-grid">
               {sortedMovies.map((movie) => (
                 <WatchlistCard 
-                  key={movie.movieId} 
+                  key={`${movie.movieId}-${movie.mediaType || 'movie'}`} 
                   movie={movie} 
                   onRemove={handleRemove} 
                 />

@@ -6,7 +6,7 @@ import ReviewForm from './ReviewForm';
 import { useAuth } from '../context/AuthContext';
 import { Star } from 'lucide-react';
 
-export default function ReviewsSection({ movieId, movieTitle, moviePoster }) {
+export default function ReviewsSection({ movieId, movieTitle, moviePoster, mediaType = 'movie' }) {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -18,7 +18,7 @@ export default function ReviewsSection({ movieId, movieTitle, moviePoster }) {
     setLoading(true);
     setError(null);
     reviewService
-      .getMovieReviews(movieId)
+      .getMovieReviews(movieId, mediaType)
       .then((data) => {
         setReviews(data || []);
       })
@@ -27,7 +27,7 @@ export default function ReviewsSection({ movieId, movieTitle, moviePoster }) {
         setError(err.message || 'Unable to fetch reviews');
       })
       .finally(() => setLoading(false));
-  }, [movieId]);
+  }, [movieId, mediaType]);
 
   useEffect(() => {
     loadReviews();
@@ -49,10 +49,10 @@ export default function ReviewsSection({ movieId, movieTitle, moviePoster }) {
         <h2 className="reviews-section__title">Community Reviews</h2>
         <p className="reviews-empty">
           No reviews yet.<br />
-          Be the first person to review this movie.
+          Be the first person to review this media.
         </p>
         {user && !hasReviewed && (
-          <ReviewForm movieId={movieId} movieTitle={movieTitle} moviePoster={moviePoster} onRefresh={loadReviews} />
+          <ReviewForm movieId={movieId} movieTitle={movieTitle} moviePoster={moviePoster} onRefresh={loadReviews} mediaType={mediaType} />
         )}
       </section>
     );
@@ -73,7 +73,7 @@ export default function ReviewsSection({ movieId, movieTitle, moviePoster }) {
         ))}
       </div>
       {user && !hasReviewed && (
-        <ReviewForm movieId={movieId} movieTitle={movieTitle} moviePoster={moviePoster} onRefresh={loadReviews} />
+        <ReviewForm movieId={movieId} movieTitle={movieTitle} moviePoster={moviePoster} onRefresh={loadReviews} mediaType={mediaType} />
       )}
     </section>
   );

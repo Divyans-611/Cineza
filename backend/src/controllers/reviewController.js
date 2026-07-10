@@ -6,7 +6,7 @@ import Review from '../models/reviewModel.js';
 // @access  Private
 export const createReview = async (req, res, next) => {
   try {
-    const { movieId, movieTitle, moviePoster = '', rating, review } = req.body || {};
+    const { movieId, movieTitle, moviePoster = '', rating, review, mediaType = 'movie' } = req.body || {};
     // Validate required fields
     if (!movieId || !movieTitle || rating === undefined || review === undefined) {
       return res.status(400).json({
@@ -29,11 +29,11 @@ export const createReview = async (req, res, next) => {
       });
     }
 
-    // Prevent duplicate review by same user for same movie
-    const existing = await Review.findOne({ user: req.user._id, movieId });
+    // Prevent duplicate review by same user for same media
+    const existing = await Review.findOne({ user: req.user._id, movieId, mediaType });
     if (existing) {
       res.status(409);
-      const err = new Error('User has already reviewed this movie');
+      const err = new Error('User has already reviewed this media');
       return next(err);
     }
 
@@ -44,6 +44,7 @@ export const createReview = async (req, res, next) => {
       moviePoster,
       rating,
       review: review.trim(),
+      mediaType,
     });
 
     return res.status(201).json({
@@ -56,13 +57,14 @@ export const createReview = async (req, res, next) => {
   }
 };
 
-// @desc    Get all reviews for a movie
+// @desc    Get all reviews for a movie/tv
 // @route   GET /api/reviews/:movieId
 // @access  Public
 export const getMovieReviews = async (req, res, next) => {
   try {
     const { movieId } = req.params;
-    const reviews = await Review.find({ movieId })
+    const mediaType = req.query.mediaType || 'movie';
+    const reviews = await Review.find({ movieId, mediaType })
       .populate('user', 'name avatar')
       .sort({ createdAt: -1 });
     return res.status(200).json({

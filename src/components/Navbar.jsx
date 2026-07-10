@@ -8,6 +8,7 @@ import { Home, Film, Sparkles, Folder, PenBox, Search, ChevronDown, User, LogOut
 const navLinks = [
   { label: 'Home', to: '/', icon: <Home size={18} /> },
   { label: 'Movies', to: '/movies', icon: <Film size={18} /> },
+  { label: 'TV Shows', to: '/tv', icon: <Film size={18} /> },
   { label: 'AI Picks', to: '/ai-picks', icon: <Sparkles size={18} /> },
   { label: 'Watchlist', to: '/watchlist', icon: <Folder size={18} /> },
   { label: 'Reviews', to: '/reviews', icon: <PenBox size={18} /> },

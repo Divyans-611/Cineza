@@ -5,6 +5,7 @@ import config from './config/index.js';
 import passport from './config/passport.js';
 import healthRoutes from './routes/healthRoutes.js';
 import movieRoutes from './routes/movieRoutes.js';
+import tvRoutes from './routes/tvRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import watchlistRoutes from './routes/watchlistRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js'; // added review routes
@@ -38,6 +39,7 @@ app.use(passport.session());
 // API routes
 app.use('/api', healthRoutes);
 app.use('/api/movies', movieRoutes);
+app.use('/api/tv', tvRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/watchlist', watchlistRoutes);
 app.use('/api/reviews', reviewRoutes); // register review routes

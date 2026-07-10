@@ -45,14 +45,14 @@ export const normalizeTMDBMovie = (movie) => {
   return {
     id: movie.id,
     title: movie.title || movie.name || 'Unknown Title',
-    year: getYearFromDate(movie.release_date),
+    year: getYearFromDate(movie.release_date || movie.first_air_date),
     rating: formatRating(movie.vote_average),
     genre: getGenreNames(movie.genre_ids),
     poster: getPosterUrl(movie.poster_path),
     backdrop: getBackdropUrl(movie.backdrop_path),
     overview: movie.overview || 'No overview available yet.',
     language: movie.original_language ? movie.original_language.toUpperCase() : 'EN',
-    runtime: movie.runtime || 0
+    runtime: movie.runtime || (movie.episode_run_time && movie.episode_run_time.length > 0 ? movie.episode_run_time[0] : 0)
   };
 };
 
@@ -84,15 +84,25 @@ export const normalizeTMDBDetails = (details, credits = {}, videos = {}) => {
   // Backward-compat cast name array
   base.cast = base.castObjects.map(c => c.name);
 
-  // Director
+  // Creator / Director
   const directorObj = credits.crew ? credits.crew.find(c => c.job === 'Director') : null;
-  base.director = directorObj ? directorObj.name : 'Unknown';
+  const createdBy = details.created_by && details.created_by.length > 0
+    ? details.created_by.map(c => c.name).join(', ')
+    : null;
+  base.director = createdBy || (directorObj ? directorObj.name : 'Unknown');
 
   // Extra TMDB metadata
   base.tagline = details.tagline || null;
   base.budget = details.budget && details.budget > 0 ? details.budget : null;
   base.revenue = details.revenue && details.revenue > 0 ? details.revenue : null;
   base.status = details.status || null;
+
+  // TV specific fields
+  base.seasons = details.number_of_seasons || null;
+  base.episodes = details.number_of_episodes || null;
+  base.networks = details.networks && details.networks.length > 0
+    ? details.networks.map(n => n.name).join(', ')
+    : null;
 
   // Trailer key
   let trailerObj = null;

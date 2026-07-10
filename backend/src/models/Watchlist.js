@@ -40,6 +40,11 @@ const watchlistSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+    mediaType: {
+      type: String,
+      enum: ['movie', 'tv'],
+      default: 'movie',
+    },
     status: {
       type: String,
       enum: ['want_to_watch', 'watching', 'watched'],
@@ -59,8 +64,8 @@ const watchlistSchema = new mongoose.Schema(
   }
 )
 
-// Prevent duplicate movies for the same user
-watchlistSchema.index({ user: 1, movieId: 1 }, { unique: true })
+// Prevent duplicate media for the same user
+watchlistSchema.index({ user: 1, movieId: 1, mediaType: 1 }, { unique: true })
 
 const Watchlist = mongoose.model('Watchlist', watchlistSchema)
 

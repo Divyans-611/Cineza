@@ -313,3 +313,10 @@ Polish pass on navigation, search, profile, footer and overall mobile responsive
 - **Inline Style Elimination:** Refactored `Login.jsx`, `Signup.jsx`, and `AuthSuccess.jsx` completely to migrate inline styling to clean, responsive CSS rules inside `global.css`.
 - **Verification:** Completed full production build compiling in 809ms with zero errors or bundle warnings.
 
+### Phase 7.10 — TV Show Support & Entertainment Discovery Expansion
+- **TV Catalog & Services:** Created `tvService.js` and `TvShows.jsx` to list and filter weekly trending/popular TV series on TMDB.
+- **Unified Media Cards & Detail Routing:** Refactored `MovieCard.jsx` to a generic `MediaCard.jsx` showing correct media type badges and years. Appended routes mapping `/tv` and `/tv/:id` alongside movies.
+- **Home shelves:** Reorganized the home page sections from 4 to 6 shelves (parallel fetching for trending/popular/top-rated movies and TV shows).
+- **Multi-Search Support:** Updated `GlobalSearch.jsx` to retrieve searchMulti data with tab options ("All", "Movies", "TV Shows") and result badges.
+- **Database Watchlist Collisions:** Modified mongoose models `Watchlist` and `Review` to add `mediaType` field, updating indexes to prevent collision checks for matching movie/tv TMDB IDs.
+- **Verification:** Completed successful compilation build (588ms) and warning-free linter validations.

@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
-import MovieCard from '../components/MovieCard'
+import MediaCard from '../components/MediaCard'
 import { movies, getMovieById as getDummyMovieById, getSimilarMovies } from '../data/movies'
-import { getMovieDetails, getMovieCredits, getMovieVideos } from '../services/movieService'
+import { getMovieDetails, getMovieCredits, getMovieVideos, getMovieRecommendations } from '../services/movieService'
+import { getTvDetails, getTvCredits, getTvVideos, getTvRecommendations } from '../services/tvService'
 import { normalizeTMDBDetails } from '../utils/movieUtils'
 import { useAuth } from '../context/AuthContext'
 import { addToWatchlist, removeFromWatchlist, checkWatchlist } from '../services/watchlistService'
@@ -109,12 +110,13 @@ function CastCard({ member }) {
   )
 }
 
-export default function MovieDetails() {
+export default function MovieDetails({ type = 'movie' }) {
   const { id } = useParams()
   const navigate = useNavigate()
   const { isAuthenticated, token } = useAuth()
 
   const [movie, setMovie] = useState(null)
+  const [recommendations, setRecommendations] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
   const [posterFailed, setPosterFailed] = useState(false)
@@ -136,7 +138,7 @@ export default function MovieDetails() {
     const checkStatus = async () => {
       if (isAuthenticated && token && movie?.id) {
         try {
-          const res = await checkWatchlist(movie.id, token)
+          const res = await checkWatchlist(movie.id, token, type)
           setIsInWatchlist(res.inWatchlist)
         } catch (err) {
           console.error('Failed to check watchlist status:', err)
@@ -144,7 +146,7 @@ export default function MovieDetails() {
       }
     }
     checkStatus()
-  }, [isAuthenticated, token, movie])
+  }, [isAuthenticated, token, movie, type])
 
   // Toggle watchlist logic — UNCHANGED
   const handleWatchlistToggle = async () => {
@@ -158,7 +160,7 @@ export default function MovieDetails() {
 
     try {
       if (isInWatchlist) {
-        await removeFromWatchlist(movie.id, token)
+        await removeFromWatchlist(movie.id, token, type)
         setIsInWatchlist(false)
         setWatchlistMessage({ type: 'success', text: 'Removed from watchlist' })
       } else {
@@ -179,10 +181,11 @@ export default function MovieDetails() {
           title: movie.title,
           posterPath: movie.poster_path || movie.posterPath || movie.poster || '',
           backdropPath: movie.backdrop_path || movie.backdropPath || movie.backdrop || '',
-          releaseDate: movie.release_date || movie.releaseDate || movie.year || '',
+          releaseDate: movie.release_date || movie.releaseDate || movie.first_air_date || movie.year || '',
           rating: Number.isFinite(safeRating) ? safeRating : 0,
           overview: movie.overview || '',
           genres: formattedGenres,
+          mediaType: type,
         }
 
         await addToWatchlist(movieData, token)
@@ -202,45 +205,56 @@ export default function MovieDetails() {
       setError(null)
 
       try {
-        const [details, credits, videos] = await Promise.all([
-          getMovieDetails(id),
-          getMovieCredits(id),
-          getMovieVideos(id)
+        const [details, credits, videos, recs] = await Promise.all([
+          type === 'tv' ? getTvDetails(id) : getMovieDetails(id),
+          type === 'tv' ? getTvCredits(id) : getMovieCredits(id),
+          type === 'tv' ? getTvVideos(id) : getMovieVideos(id),
+          type === 'tv' ? getTvRecommendations(id) : getMovieRecommendations(id)
         ])
 
         const normalized = normalizeTMDBDetails(details, credits, videos)
         setMovie(normalized)
 
+        const recsList = recs && recs.results ? recs.results.slice(0, 4).map(item => ({
+          ...item,
+          mediaType: type
+        })) : []
+        setRecommendations(recsList)
+
       } catch (err) {
         console.error('API Error, falling back to dummy data:', err)
         setError('Showing offline data — connect to backend for full details.')
-        const dummy = getDummyMovieById(id)
+        const dummy = type === 'tv' ? null : getDummyMovieById(id)
         if (dummy) {
           setMovie(dummy)
         } else {
           setMovie(null)
         }
+        setRecommendations([])
       } finally {
         setIsLoading(false)
       }
     }
 
     fetchDetails()
-  }, [id])
+  }, [id, type])
 
   if (isLoading) return <MovieDetailsSkeleton />
   if (!movie) return <MovieNotFound />
 
-  let similarMovies = getSimilarMovies(movie.id)
-  if (similarMovies.length === 0) {
-    const currentGenre = movie.genre || (Array.isArray(movie.genres) && movie.genres[0]) || 'Drama'
-    const sameGenre = movies.filter(
-      (m) => m.id !== movie.id && m.genre && m.genre.toLowerCase() === currentGenre.toLowerCase()
-    )
-    const others = movies.filter(
-      (m) => m.id !== movie.id && (!m.genre || m.genre.toLowerCase() !== currentGenre.toLowerCase())
-    )
-    similarMovies = [...sameGenre, ...others].slice(0, 4)
+  let similarMovies = recommendations
+  if (similarMovies.length === 0 && type !== 'tv') {
+    similarMovies = getSimilarMovies(movie.id)
+    if (similarMovies.length === 0) {
+      const currentGenre = movie.genre || (Array.isArray(movie.genres) && movie.genres[0]) || 'Drama'
+      const sameGenre = movies.filter(
+        (m) => m.id !== movie.id && m.genre && m.genre.toLowerCase() === currentGenre.toLowerCase()
+      )
+      const others = movies.filter(
+        (m) => m.id !== movie.id && (!m.genre || m.genre.toLowerCase() !== currentGenre.toLowerCase())
+      )
+      similarMovies = [...sameGenre, ...others].slice(0, 4)
+    }
   }
 
   // ── Hero backdrop style
@@ -406,12 +420,12 @@ export default function MovieDetails() {
         <div className="md-body">
           <div className="md-body__inner">
 
-            {/* ─── Movie Info Grid ─── */}
-            {(movie.budget || movie.revenue || movie.status || movie.language) && (
-              <section className="md-section" aria-label="Movie details">
+            {/* ─── Media Info Grid ─── */}
+            {(movie.budget || movie.revenue || movie.status || movie.language || movie.seasons || movie.episodes || movie.networks) && (
+              <section className="md-section" aria-label={`${type === 'tv' ? 'TV Show' : 'Movie'} details`}>
                 <h2 className="md-section__title">
                   <span className="md-section__accent" aria-hidden="true" />
-                  Movie Details
+                  {type === 'tv' ? 'TV Show Details' : 'Movie Details'}
                 </h2>
                 <div className="md-info-grid">
                   {movie.status && (
@@ -430,17 +444,42 @@ export default function MovieDetails() {
                       <dd className="md-info-item__value">{movie.language}</dd>
                     </div>
                   )}
-                  {movie.budget && (
-                    <div className="md-info-item">
-                      <dt className="md-info-item__label">Budget</dt>
-                      <dd className="md-info-item__value">{formatCurrency(movie.budget)}</dd>
-                    </div>
-                  )}
-                  {movie.revenue && (
-                    <div className="md-info-item">
-                      <dt className="md-info-item__label">Box Office</dt>
-                      <dd className="md-info-item__value">{formatCurrency(movie.revenue)}</dd>
-                    </div>
+                  {type === 'tv' ? (
+                    <>
+                      {movie.seasons && (
+                        <div className="md-info-item">
+                          <dt className="md-info-item__label">Seasons</dt>
+                          <dd className="md-info-item__value">{movie.seasons}</dd>
+                        </div>
+                      )}
+                      {movie.episodes && (
+                        <div className="md-info-item">
+                          <dt className="md-info-item__label">Episodes</dt>
+                          <dd className="md-info-item__value">{movie.episodes}</dd>
+                        </div>
+                      )}
+                      {movie.networks && (
+                        <div className="md-info-item">
+                          <dt className="md-info-item__label">Network</dt>
+                          <dd className="md-info-item__value">{movie.networks}</dd>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      {movie.budget && (
+                        <div className="md-info-item">
+                          <dt className="md-info-item__label">Budget</dt>
+                          <dd className="md-info-item__value">{formatCurrency(movie.budget)}</dd>
+                        </div>
+                      )}
+                      {movie.revenue && (
+                        <div className="md-info-item">
+                          <dt className="md-info-item__label">Box Office</dt>
+                          <dd className="md-info-item__value">{formatCurrency(movie.revenue)}</dd>
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               </section>
@@ -500,7 +539,7 @@ export default function MovieDetails() {
                   <div className="movie-section__shelf">
                     {similarMovies.map(similar => (
                       <div key={similar.id} className="movie-section__item">
-                        <MovieCard movie={similar} />
+                        <MediaCard media={similar} />
                       </div>
                     ))}
                   </div>
@@ -518,6 +557,7 @@ export default function MovieDetails() {
                 movieId={movie.id}
                 movieTitle={movie.title}
                 moviePoster={movie.poster}
+                mediaType={type}
               />
             </section>
 

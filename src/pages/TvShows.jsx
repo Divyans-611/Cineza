@@ -1,102 +1,92 @@
 import { useEffect, useMemo, useState } from 'react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
-import { Film, Search, Loader2, AlertTriangle } from 'lucide-react'
+import { Film, Search, Loader2 } from 'lucide-react'
 import MediaCard from '../components/MediaCard'
-import { movies as dummyMovies } from '../data/movies'
-import { getTrendingMovies, searchMovies } from '../services/movieService'
-import { normalizeTMDBMovie } from '../utils/movieUtils'
+import { getTrendingTv, searchTv } from '../services/tvService'
 
 const GENRES = [
   'All',
-  'Action',
   'Drama',
-  'Sci-Fi',
-  'Thriller',
+  'Sci-Fi & Fantasy',
+  'Action & Adventure',
   'Comedy',
-  'Romance',
-  'Horror',
+  'Mystery',
+  'Animation',
+  'Crime',
 ]
 
-// Fallback search used only for dummy data offline filtering
-function matchesSearch(movie, query) {
-  if (!query) return true
-  const q = query.toLowerCase()
-  if (movie.title.toLowerCase().includes(q)) return true
-  if (movie.genre.toLowerCase().includes(q)) return true
-  if (movie.director.toLowerCase().includes(q)) return true
-  if (movie.cast.some((name) => name.toLowerCase().includes(q))) return true
-  return false
-}
 
 function resetFilters(setSearch, setActiveGenre) {
   setSearch('')
   setActiveGenre('All')
 }
 
-export default function Movies() {
+export default function TvShows() {
   const [search, setSearch] = useState('')
   const [activeGenre, setActiveGenre] = useState('All')
   
-  const [apiMovies, setApiMovies] = useState([])
+  const [apiShows, setApiShows] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [isUsingDummy, setIsUsingDummy] = useState(false)
 
-  // Fetch movies from API on load and search
   useEffect(() => {
     let timeoutId;
     
-    const fetchMovies = async () => {
+    const fetchTvShows = async () => {
       setIsLoading(true)
       setError(null)
       
       try {
         let results;
         if (search.trim() !== '') {
-           const data = await searchMovies(search.trim())
+           const data = await searchTv(search.trim())
            results = data.results || []
         } else {
-           const data = await getTrendingMovies()
+           const data = await getTrendingTv()
            results = data.results || []
         }
         
-        setApiMovies(results.map(normalizeTMDBMovie))
-        setIsUsingDummy(false)
+        // Normalize TV show data structure
+        const normalized = results.map(item => ({
+          id: item.id,
+          title: item.name || item.title,
+          poster: item.poster_path ? `https://image.tmdb.org/t/p/w500${item.poster_path}` : null,
+          poster_path: item.poster_path,
+          rating: item.vote_average,
+          year: item.first_air_date ? new Date(item.first_air_date).getFullYear() : 'N/A',
+          first_air_date: item.first_air_date,
+          genre: 'TV Show',
+          mediaType: 'tv'
+        }));
+        
+        setApiShows(normalized)
       } catch (err) {
-        console.error("API Error, falling back to dummy data:", err)
-        setError("Failed to connect to backend API. Using offline data.")
-        setApiMovies(dummyMovies)
-        setIsUsingDummy(true)
+        console.error("API Error fetching TV Shows:", err)
+        setError("Failed to connect to backend API. Please try again.")
       } finally {
         setIsLoading(false)
       }
     }
 
-    // Beginner-friendly debounce: wait 500ms before calling API for search
+    // Debounced search
     timeoutId = setTimeout(() => {
-      fetchMovies()
+      fetchTvShows()
     }, search.trim() !== '' ? 500 : 0);
 
     return () => clearTimeout(timeoutId)
   }, [search])
 
-  const filteredMovies = useMemo(() => {
-    return apiMovies.filter((movie) => {
-      const matchesGenre = activeGenre === 'All' || movie.genre === activeGenre || (isUsingDummy && movie.genre === activeGenre)
-      
-      // If using dummy data, we must do local text search since API didn't filter it
-      if (isUsingDummy && search.trim() !== '') {
-          return matchesGenre && matchesSearch(movie, search.trim())
-      }
-      
+  const filteredShows = useMemo(() => {
+    return apiShows.filter((show) => {
+      const matchesGenre = activeGenre === 'All' || show.genre === activeGenre
       return matchesGenre
     })
-  }, [apiMovies, activeGenre, isUsingDummy, search])
+  }, [apiShows, activeGenre])
 
   const hasActiveFilters = search.trim() !== '' || activeGenre !== 'All'
-  const countLabel = filteredMovies.length === 1 ? 'movie' : 'movies'
-  const countText = `Showing ${filteredMovies.length} ${countLabel}`
+  const countLabel = filteredShows.length === 1 ? 'show' : 'shows'
+  const countText = `Showing ${filteredShows.length} ${countLabel}`
 
   return (
     <>
@@ -104,23 +94,22 @@ export default function Movies() {
       <main className="page-shell movies-page">
         <div className="page-shell__inner">
           <header className="section-header section-header--left">
-            <h1 className="section-header__title">Explore Movies</h1>
+            <h1 className="section-header__title">Explore TV Shows</h1>
             <p className="section-header__subtitle">
-              Search, filter, and discover films across genres, moods, and
-              ratings.
+              Browse weekly trending shows, search series by title, and save them to your watchlist.
             </p>
           </header>
 
           <div className="movies-toolbar glass-card">
-            <label className="movies-search" htmlFor="movie-search">
+            <label className="movies-search" htmlFor="tv-search">
               <span className="movies-search__icon" aria-hidden="true">
                 <Search size={20} />
               </span>
               <input
-                id="movie-search"
+                id="tv-search"
                 type="search"
                 className="movies-search__input"
-                placeholder="Search by title..."
+                placeholder="Search TV shows by title..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -145,13 +134,13 @@ export default function Movies() {
           
           {error && (
             <div className="error-banner">
-              <AlertTriangle size={20} color="var(--color-primary)" /> {error}
+              ⚠️ {error}
             </div>
           )}
 
           <div className="movies-results-bar">
             <p className="movies-page__count" aria-live="polite">
-              {isLoading ? "Loading movies..." : countText}
+              {isLoading ? "Loading TV shows..." : countText}
             </p>
             {hasActiveFilters && (
               <button
@@ -171,10 +160,10 @@ export default function Movies() {
               </span>
               <p className="empty-state__title">Loading...</p>
             </div>
-          ) : filteredMovies.length > 0 ? (
+          ) : filteredShows.length > 0 ? (
             <div className="movies-grid">
-              {filteredMovies.map((movie) => (
-                <MediaCard key={movie.id} media={movie} />
+              {filteredShows.map((show) => (
+                <MediaCard key={show.id} media={show} />
               ))}
             </div>
           ) : (
@@ -182,9 +171,9 @@ export default function Movies() {
               <span className="empty-state__icon" aria-hidden="true" style={{ display: 'flex', justifyContent: 'center' }}>
                 <Film size={40} opacity={0.5} color="var(--color-gold)" />
               </span>
-              <p className="empty-state__title">No movies found</p>
+              <p className="empty-state__title">No TV shows found</p>
               <p className="empty-state__text">
-                Try another title or genre.
+                Try another title or adjust your search filter.
               </p>
               <button
                 type="button"

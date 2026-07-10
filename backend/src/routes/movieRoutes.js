@@ -9,6 +9,7 @@ import {
   getMovieRecommendations,
   getTopRatedMovies,
   discoverByGenre,
+  multiSearch,
 } from '../controllers/movieController.js'
 
 const router = express.Router()
@@ -18,6 +19,7 @@ router.get('/trending', getTrendingMovies)
 router.get('/popular', getPopularMovies)
 router.get('/top-rated', getTopRatedMovies)
 router.get('/search', searchMovies)
+router.get('/search/multi', multiSearch)
 router.get('/genre/:genreId', discoverByGenre)
 // Specific subroutes must be defined before the generic ':id' route
 router.get('/:id/credits', getMovieCredits)

@@ -46,9 +46,10 @@ export const addToWatchlist = async (movieData, token) => {
  * Remove movie from watchlist
  * @param {number|string} movieId - TMDB Movie ID
  * @param {string} token - JWT auth token
+ * @param {string} mediaType - 'movie' or 'tv'
  */
-export const removeFromWatchlist = async (movieId, token) => {
-  const response = await fetch(`${API_BASE_URL}/api/watchlist/${movieId}`, {
+export const removeFromWatchlist = async (movieId, token, mediaType = 'movie') => {
+  const response = await fetch(`${API_BASE_URL}/api/watchlist/${movieId}?mediaType=${mediaType}`, {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -61,9 +62,10 @@ export const removeFromWatchlist = async (movieId, token) => {
  * Check if movie is in watchlist
  * @param {number|string} movieId - TMDB Movie ID
  * @param {string} token - JWT auth token
+ * @param {string} mediaType - 'movie' or 'tv'
  */
-export const checkWatchlist = async (movieId, token) => {
-  const response = await fetch(`${API_BASE_URL}/api/watchlist/check/${movieId}`, {
+export const checkWatchlist = async (movieId, token, mediaType = 'movie') => {
+  const response = await fetch(`${API_BASE_URL}/api/watchlist/check/${movieId}?mediaType=${mediaType}`, {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${token}`,

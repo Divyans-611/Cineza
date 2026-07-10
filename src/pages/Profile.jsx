@@ -114,7 +114,7 @@ export default function Profile() {
                   </div>
                 </div>
                 <p className="profile-card__desc">
-                  Earn more experience points (XP) and level up your status by writing movie reviews, ranking discovery Shelves, and interacting with AI movie recommendation features!
+                  Earn more experience points (XP) and level up your status by writing reviews, ranking discovery Shelves, and interacting with AI recommendation features!
                 </p>
               </div>
 
@@ -122,7 +122,7 @@ export default function Profile() {
               <div className="glass-card profile-card">
                 <div>
                   <h3 className="profile-card__title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <Medal size={20} className="profile-card__icon" color="var(--color-gold)" /> Movie Badges
+                    <Medal size={20} className="profile-card__icon" color="var(--color-gold)" /> Cineza Badges
                   </h3>
                   <div className="profile-card__badges">
                     {badges.map((badge) => (
@@ -133,7 +133,7 @@ export default function Profile() {
                   </div>
                 </div>
                 <p className="profile-card__desc">
-                  Achievements mark your deep connection to cinema. Discover hidden titles and leave critiques to unlock legendary custom profile badges!
+                  Achievements mark your deep connection to cinema & series. Discover hidden titles and leave critiques to unlock legendary custom profile badges!
                 </p>
               </div>
 
@@ -165,7 +165,7 @@ export default function Profile() {
                 <div>
                   <h4 className="profile-card__subtitle">My Watchlist</h4>
                   <p className="profile-card__stat">
-                    {watchlistCount} movies saved
+                    {watchlistCount} {watchlistCount === 1 ? 'item' : 'items'} saved
                   </p>
                   <button onClick={() => navigate('/watchlist')} className="btn btn--secondary profile-card__action">
                     View Watchlist
@@ -179,7 +179,7 @@ export default function Profile() {
                 <div>
                   <h4 className="profile-card__subtitle">CineReviews</h4>
                   <p className="profile-card__desc">
-                    Critique logs are waiting. Soon you can publish custom movie reviews, earn community votes, and level up faster!
+                    Critique logs are waiting. Soon you can publish custom media reviews, earn community votes, and level up faster!
                   </p>
                 </div>
               </div>

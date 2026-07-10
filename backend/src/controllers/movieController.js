@@ -102,3 +102,17 @@ export const discoverByGenre = async (req, res, next) => {
     next(error)
   }
 }
+
+// Multi-search (movies + tv shows)
+export const multiSearch = async (req, res, next) => {
+  try {
+    const { query } = req.query
+    if (!query) {
+      return res.status(400).json({ success: false, message: 'Query parameter is required' })
+    }
+    const data = await fetchFromTMDB('/search/multi', { query })
+    res.json({ success: true, data })
+  } catch (error) {
+    next(error)
+  }
+}
