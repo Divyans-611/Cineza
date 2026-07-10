@@ -66,3 +66,39 @@ export const getMovieVideos = async (req, res, next) => {
     next(error)
   }
 }
+
+// Get TMDB recommendations for a specific movie
+export const getMovieRecommendations = async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const data = await fetchFromTMDB(`/movie/${id}/recommendations`)
+    res.json({ success: true, data })
+  } catch (error) {
+    next(error)
+  }
+}
+
+// Get top-rated movies
+export const getTopRatedMovies = async (req, res, next) => {
+  try {
+    const data = await fetchFromTMDB('/movie/top_rated')
+    res.json({ success: true, data })
+  } catch (error) {
+    next(error)
+  }
+}
+
+// Discover movies by genre
+export const discoverByGenre = async (req, res, next) => {
+  try {
+    const { genreId } = req.params
+    const data = await fetchFromTMDB('/discover/movie', {
+      with_genres: genreId,
+      sort_by: 'vote_average.desc',
+      'vote_count.gte': '200',
+    })
+    res.json({ success: true, data })
+  } catch (error) {
+    next(error)
+  }
+}

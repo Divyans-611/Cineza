@@ -54,3 +54,12 @@ export const getMovieCredits = (id) => fetchAPI(`/api/movies/${id}/credits`);
 
 // Get videos (trailers, teasers) for a specific movie
 export const getMovieVideos = (id) => fetchAPI(`/api/movies/${id}/videos`);
+
+// Get TMDB recommendations for a specific movie
+export const getMovieRecommendations = (id) => fetchAPI(`/api/movies/${id}/recommendations`);
+
+// Get top-rated movies
+export const getTopRatedMovies = () => fetchAPI('/api/movies/top-rated');
+
+// Discover movies by genre ID
+export const getMoviesByGenre = (genreId) => fetchAPI(`/api/movies/genre/${genreId}`);

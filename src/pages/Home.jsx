@@ -2,6 +2,7 @@ import Navbar from '../components/Navbar'
 import Hero from '../components/Hero'
 import FeaturedMovies from '../components/FeaturedMovies'
 import CuratedSection from '../components/CuratedSection'
+import DirectorsCut from '../components/DirectorsCut'
 import { curatedCollections } from '../data/curatedCollections'
 import AIPicksPreview from '../components/AIPicksPreview'
 import GamificationPreview from '../components/GamificationPreview'
@@ -9,6 +10,7 @@ import CinezaDock from '../components/CinezaDock'
 import Footer from '../components/Footer'
 
 export default function Home() {
+
   // Only display the top 3 collections to not overload the Home page
   const collectionsToDisplay = curatedCollections.filter(c => 
     ['underrated-gems', 'cult-classics', 'mind-bending'].includes(c.id)
@@ -20,6 +22,8 @@ export default function Home() {
       <main>
         <Hero />
         <FeaturedMovies />
+        
+        <DirectorsCut />
         
         {/* Parent Curated Zone Heading */}
         <section className="curated-zone section">
