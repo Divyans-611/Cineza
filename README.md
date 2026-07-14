@@ -1,5 +1,3 @@
-<img width="701" height="658" alt="image" src="https://github.com/user-attachments/assets/f40ff27b-fc40-4055-bf02-6927fe4f26eb" /><div align="center">
-
 # 🎬 Cineza
 
 ### A Modern Movie & TV Discovery Platform
@@ -21,24 +19,8 @@ Cineza is a full-stack movie and TV show discovery platform powered by the TMDB 
 
 <!-- Screenshot placeholders — replace with actual screenshots -->
 <table>
-  <tr>
-    <td> <img width="992" height="876" alt="image" src="https://github.com/user-attachments/assets/febe604e-35a4-454a-8de2-f8607f5f531c" />
-        <img src alt="Cineza Home Page" width="400"/></td>
-    <img width="701" height="658" alt="image" src="https://github.com/user-attachments/assets/9a5d9049-d584-4003-892e-1489abe6aa0e" />
-    <td><img alt="Movie Details" width="400"/></td>
-  </tr>
-  <tr>
-    <td align="center"><em>Home — Cinematic Hero & Trending</em></td>
-    <td align="center"><em>Movie Details — Cast, Trailers & Reviews</em></td>
-  </tr>
-  <tr>
-    <td><img src="docs/screenshots/watchlist.png" alt="Watchlist" width="400"/></td>
-    <td><img alt="Global Search" width="400"/></td>
-  </tr>
-  <tr>
-    <td align="center"><em>Personal Watchlist</em></td>
-    <td align="center"><em>Global Search (⌘K)</em></td>
-  </tr>
+  ![Uploading image.png…]()
+
 </table>
 
 </div>
