@@ -11,7 +11,9 @@
 
 Cineza is a full-stack movie and TV show discovery platform powered by the TMDB API. Browse trending titles, search across movies and TV shows, manage personal watchlists, write reviews, and authenticate with email or Google OAuth.
 
-[**Live Demo →**](#)https://cineza-drab.vercel.app/;[**Report Bug**](../../issues)&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;[**Request Feature**](../../issues)
+[**🚀 Live Demo →**](https://cineza-drab.vercel.app/) &nbsp;&nbsp;·&nbsp;&nbsp;
+[**🐞 Report Bug**](../../issues) &nbsp;&nbsp;·&nbsp;&nbsp;
+[**💡 Request Feature**](../../issues)
 
 ---
 
