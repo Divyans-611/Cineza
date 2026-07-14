@@ -22,7 +22,8 @@ Cineza is a full-stack movie and TV show discovery platform powered by the TMDB 
 <!-- Screenshot placeholders — replace with actual screenshots -->
 <table>
   <tr>
-    <td><img src="docs/screenshots/home.png" alt="Cineza Home Page" width="400"/></td>
+    <td> <img width="992" height="876" alt="image" src="https://github.com/user-attachments/assets/febe604e-35a4-454a-8de2-f8607f5f531c" />
+<img src alt="Cineza Home Page" width="400"/></td>
     <td><img src="docs/screenshots/details.png" alt="Movie Details" width="400"/></td>
   </tr>
   <tr>
