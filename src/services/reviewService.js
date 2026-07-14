@@ -1,13 +1,13 @@
 // src/services/reviewService.js
 // Service layer for Review API calls
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 /** Helper to build Authorization header if token is provided */
 const authHeaders = (token) => (token ? { Authorization: `Bearer ${token}` } : {});
 
 export const getMovieReviews = async (movieId, mediaType = 'movie') => {
-  const response = await fetch(`${API_BASE_URL}/api/reviews/movie/${movieId}?mediaType=${mediaType}`);
+  const response = await fetch(`${API_BASE}/api/reviews/movie/${movieId}?mediaType=${mediaType}`);
   const json = await response.json();
   if (!json.success) {
     throw new Error(json.message || 'Failed to fetch reviews');
@@ -16,7 +16,7 @@ export const getMovieReviews = async (movieId, mediaType = 'movie') => {
 };
 
 export const createReview = async (reviewData, token) => {
-  const response = await fetch(`${API_BASE_URL}/api/reviews`, {
+  const response = await fetch(`${API_BASE}/api/reviews`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -32,7 +32,7 @@ export const createReview = async (reviewData, token) => {
 };
 
 export const updateReview = async (reviewId, updateData, token) => {
-  const response = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}`, {
+  const response = await fetch(`${API_BASE}/api/reviews/${reviewId}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -48,7 +48,7 @@ export const updateReview = async (reviewId, updateData, token) => {
 };
 
 export const deleteReview = async (reviewId, token) => {
-  const response = await fetch(`${API_BASE_URL}/api/reviews/${reviewId}`, {
+  const response = await fetch(`${API_BASE}/api/reviews/${reviewId}`, {
     method: 'DELETE',
     headers: {
       ...authHeaders(token),

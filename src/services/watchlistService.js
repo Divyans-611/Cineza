@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 /**
  * Helper to handle fetch responses
@@ -16,7 +16,7 @@ const handleResponse = async (response) => {
  * @param {string} token - JWT auth token
  */
 export const getWatchlist = async (token) => {
-  const response = await fetch(`${API_BASE_URL}/api/watchlist`, {
+  const response = await fetch(`${API_BASE}/api/watchlist`, {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -31,7 +31,7 @@ export const getWatchlist = async (token) => {
  * @param {string} token - JWT auth token
  */
 export const addToWatchlist = async (movieData, token) => {
-  const response = await fetch(`${API_BASE_URL}/api/watchlist`, {
+  const response = await fetch(`${API_BASE}/api/watchlist`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -49,7 +49,7 @@ export const addToWatchlist = async (movieData, token) => {
  * @param {string} mediaType - 'movie' or 'tv'
  */
 export const removeFromWatchlist = async (movieId, token, mediaType = 'movie') => {
-  const response = await fetch(`${API_BASE_URL}/api/watchlist/${movieId}?mediaType=${mediaType}`, {
+  const response = await fetch(`${API_BASE}/api/watchlist/${movieId}?mediaType=${mediaType}`, {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -65,7 +65,7 @@ export const removeFromWatchlist = async (movieId, token, mediaType = 'movie') =
  * @param {string} mediaType - 'movie' or 'tv'
  */
 export const checkWatchlist = async (movieId, token, mediaType = 'movie') => {
-  const response = await fetch(`${API_BASE_URL}/api/watchlist/check/${movieId}?mediaType=${mediaType}`, {
+  const response = await fetch(`${API_BASE}/api/watchlist/check/${movieId}?mediaType=${mediaType}`, {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${token}`,

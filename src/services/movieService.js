@@ -1,6 +1,6 @@
 // Base URL for the Cineza backend API
 // This reads from .env in development, or defaults to localhost:5000
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 /**
  * A beginner-friendly helper function to make API calls to our backend.
@@ -11,7 +11,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000
  */
 const fetchAPI = async (endpoint) => {
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`);
+    const response = await fetch(`${API_BASE}${endpoint}`);
     const json = await response.json();
 
     // Check if our backend explicitly returned success: false
